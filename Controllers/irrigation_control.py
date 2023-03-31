@@ -7,6 +7,7 @@ import pickle
 import Controller
 import time 
 import logging 
+import json
 
 
 
@@ -45,10 +46,11 @@ class Controller_Irrigation(Controller):
                 self.__moisture = msg["INFO"]["Value"]
         if self.__moisture_state and self.__temperature_state : 
                 if self.irrigation_decision(self.__temperature,self.__moisture): 
-                    #time = self.irrigation_time(self.moisture)
-                    logging.info(f"Irrigation system is On")
+                    time = self.irrigation_time(self.__moisture)
+                    logging.info(f"Irrigation system is On for {time} s")
                     self.send_actuation(True)
                     self.__moisture_state , self.__temperature_state = False , False 
+                    requests.post('http://127.0.0.1:8080/health',json.dumps({"duration":time,"time":datetime.datetime.now().strftime("%m/%d/%y %H:%M:%S")}))  
                     
         time.sleep(120.0)            
     @staticmethod               

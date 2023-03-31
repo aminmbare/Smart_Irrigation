@@ -113,9 +113,36 @@ class CatalogManager:
             if uri[1] == "Irrigation": 
                 stats["Irrigation"].append({"t":str(timestamp) , "v": str(Input["value"])})    
             File = open("stats.json", "w+") 
-            File.write(json.dumps(json.dumps(stats, indent = 4)))
+            File.write(json.dumps(stats, indent = 4))
             File.close()
-
+        if len(uri)!= 0 and uri[0] == "irrigation" : 
+            with open("Catalog.json") as json_file : 
+                catalog = json.loads(json_file)
+                json_file.close()
+            
+            last_update =  datetime.strptime(catalog["userLists"]["Plants"]["irrigation"]["time"],'%m/%d/%y %H:%M:%S')
+            new_update = datetime.strptime(Input["time"],'%m/%d/%y %H:%M:%S')
+            if last_update.day ==  new_update : 
+                catalog["userLists"]["Plants"]["irrigation"]["Number of irrigation This day"] += 1
+            else : 
+                catalog["userLists"]["Plants"]["irrigation"]["Number of irrigation This day"] = 1
+            catalog["userLists"]["Plants"]["irrigation"]["duration"] = Input["duration"]  
+            File = open("stats.json", "w+") 
+            File.write(json.dumps(stats, indent = 4))
+            File.close()
+        if len(uri) != 0 and uri[0] =="health" : 
+            with open("Catalog.json") as json_file : 
+                catalog = json.loads(json_file)
+                json_file.close()
+            catalog["userLists"]["Plants"]["health data"]["health status"] = Input["health"]
+            catalog["userLists"]["Plants"]["health data"]["Last Update"] = Input["time"]
+            File = open("stats.json", "w+") 
+            File.write(json.dumps(stats, indent = 4))
+            File.close()
+            
+             
+                
+                        
 
     def PUT(self, *uri , **params):
 
@@ -133,18 +160,18 @@ class CatalogManager:
                 catalog["userList"]["user"]["Plants"][plant]["Max_Moisture"] = threshold_max
 
 
-            if uri[1] == "Irrigation Status":
-                user = uri[1]
-                plant = uri[2]
-                duration = params["duration"]
-                time = params["time"]
-                rep = params["reps"]
-                catalog["userList"]["user"]["Plants"][plant]["irrigation"]["time"] = time
-                catalog["userList"]["user"]["Plants"][plant]["irrigation"]["duration"] = duration
-                if rep : 
-                    catalog["userList"]["user"]["Plants"][plant]["irrigation"]["Number of irrigation This day"]+=1
-                else : 
-                    catalog["userList"]["user"]["Plants"][plant]["irrigation"]["Number of irrigation This day"] = 0
+            #if uri[1] == "Irrigation Status":
+            #    user = uri[1]
+            #    plant = uri[2]
+            #    duration = params["duration"]
+            #    time = params["time"]
+            #    rep = params["reps"]
+            #    catalog["userList"]["user"]["Plants"][plant]["irrigation"]["time"] = time
+            #    catalog["userList"]["user"]["Plants"][plant]["irrigation"]["duration"] = duration
+            #    if rep : 
+            #        catalog["userList"]["user"]["Plants"][plant]["irrigation"]["Number of irrigation This day"]+=1
+            #    else : 
+            #        catalog["userList"]["user"]["Plants"][plant]["irrigation"]["Number of irrigation This day"] = 0
                 
 
                 
