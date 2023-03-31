@@ -28,6 +28,12 @@ class CatalogManager:
                 details['broker'] = catalog["broker"]
                 details['port'] = catalog['port']
                 return json.dumps(details)
+            
+            if uri[1] == "ThinkSpeak": 
+                details = {}
+                details = catalog["ThinkSpeak Field"]
+                return json.dumps(details)
+                
 
 
             if uri[1] == "topics":
