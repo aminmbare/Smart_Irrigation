@@ -69,7 +69,7 @@ class Controller_Irrigation(Controller):
     
     def send_actuation(self,value:bool)-> None :
         
-        new_topic = (requests.get("http://127.0.0.1:8000/catalog/all_topics?program=controllers&type=irrigation"))["topic"]
+        new_topic = requests.get("http://127.0.0.1:8000/catalog/all_topics?program=controllers&type=irrigation").json()["topic"]
         self.publish(value,new_topic[0])
         
     
