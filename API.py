@@ -6,6 +6,7 @@ from datetime import datetime
 from Statistics.stats_moisture import record_moist
 from Statistics.stats_temperature import record_temp
 from Statistics.stats_humidity import record_humidity
+import os 
 
 
 
@@ -16,10 +17,12 @@ class CatalogManager:
         self.stats_temp = record_temp()
         self.stats_humidity = record_humidity()
         self.stats_moisture = record_moist()
+        PATH = os.getcwd()
+        self.Catalog_path= os.path.join(PATH, "catalog.json")
     
     def GET(self,*uri,**params):
         if len(uri)!= 0 and uri[0] == 'Catalog':
-            with open('catalog.json') as json_file:
+            with open(self.Catalog_path) as json_file:
                 catalog = json.load(json_file)
                 json_file.close()
 
@@ -29,46 +32,49 @@ class CatalogManager:
                 details['port'] = catalog['port']
                 return json.dumps(details)
             
-            if uri[1] == "ThinkSpeak": 
+            elif uri[1] == "ThinkSpeak": 
                 details = {}
                 details = catalog["ThinkSpeak Field"]
                 return json.dumps(details)
                 
 
 
-            if uri[1] == "topics":
+            elif uri[1] == "topics":
                 program = params["program"]
                 Val_type = params['type']
-                topics = []
-                for user in Catalog['Users_List']:
-                    if Val_type in Catalog["Users_List"][user]['topics'][program]:
-                        topics.append(catalog["Users_List"][user]['topics'][program][Val_type])
-                return json.dumps({"topic":topics}) 
 
 
-            if uri[1] =="users_info":
-                user = []
-                try: 
-                    user['Name'] = Catalog["User_info"]["User_Name"]
-                    user['ID'] = Catalog["User_info"]["User_ID"]
-                    return json.dumps(user)
-                except : 
-                    raise cherrypy.HTTPError(500,"Request Not Valid")
-            if uri[1] == "Plant_Info":
-                plant = []
-                plant = Catalog["User_info"]["Plant_Info"]                 
-                return json.dumps(plant)
+                if Val_type in Catalog['topics'][program]:
+                        return json.dumps({"topic":catalog['topics'][program][Val_type]}) 
+                else : 
+                    return cherrypy.HTTPError(400, f"Topic not found for {program} and {Val_type}")
+
+
+            elif uri[1] =="users_info":
+                user = dict()
+                user['Name'] = Catalog["User_Name"]
+                user['ID'] = Catalog["User_ID"]
+                return json.dumps(user)
+
+            elif uri[1] == "Irrigation_Status":
+                return json.dumps({"health status":Catalog["Plants"]["Irrigation"]})
           
           
-            if uri[1] == "Health_Status":
-                   return json.dumps({"health status":Catalog["User_Ino"]["Plant_info"]["health status"]})
+            elif uri[1] == "Health_Status":
+                   return json.dumps({"health status":Catalog["Plants"]["health data"]})
+               
+            elif uri[1] == "ChatBot": 
+                return json.dumps({"ChatBot":Catalog["ChatBot"]})
+            else : 
+                cherrypy.HTTPError(400, "Bad Catalog Request")
+                
 
         elif len(uri) != 0 and uri[0] == 'statistics' : 
             with open("catalog.json") as json_file: 
                 catalog = json.load(json_file)
                 json_file.close()
 
-            with open("stats.json") as json_file: 
+            with open() as json_file: 
                 stats = json.load(json_file)
                 json_file.close()
             
@@ -79,27 +85,16 @@ class CatalogManager:
             return json.dumps({"temperature": temp_stats, "Moisture":moist_stats , "Humidity":humidity_stats})
 
         else : 
-            return "Not Valid Command , Try Again !!"    
+            return cherrypy.HTTPError(400, "Bad Get Request")    
                     
-            
-            
-            """
-            CHATBOT POST MISSING 
-            STATISTIC MISSING 
-            
-            """
+    
     def POST(self,*uri,**param):
 
         body = cherrypy.request.body.read()
 
         Input = json.load(body)
 
-        if len(uri) != 0 and uri[0] == "catalog" : 
-            if uri[1] =="ChatID":
-                """
-                CHAT ID POST
-                """
-
+    
         if len(uri) != 0 and uri[0] == "statistics" :
             with open("stats.json") as json_file : 
                 stats = json.load(json_file)
@@ -121,63 +116,38 @@ class CatalogManager:
             File = open("stats.json", "w+") 
             File.write(json.dumps(stats, indent = 4))
             File.close()
-        if len(uri)!= 0 and uri[0] == "irrigation" : 
+        elif len(uri)!= 0 and uri[0] == "irrigation" : 
             with open("Catalog.json") as json_file : 
                 catalog = json.loads(json_file)
                 json_file.close()
             
-            last_update =  datetime.strptime(catalog["userLists"]["Plants"]["irrigation"]["time"],'%m/%d/%y %H:%M:%S')
+            last_update =  datetime.strptime(catalog["Plants"]["irrigation"]["time"],'%m/%d/%y %H:%M:%S')
             new_update = datetime.strptime(Input["time"],'%m/%d/%y %H:%M:%S')
-            if last_update.day ==  new_update : 
-                catalog["userLists"]["Plants"]["irrigation"]["Number of irrigation This day"] += 1
+            if last_update.day ==  new_update.day : 
+                
+                catalog["Plants"]["irrigation"]["Number of irrigation This day"] += 1
             else : 
-                catalog["userLists"]["Plants"]["irrigation"]["Number of irrigation This day"] = 1
-            catalog["userLists"]["Plants"]["irrigation"]["duration"] = Input["duration"]  
+                catalog["Plants"]["irrigation"]["Number of irrigation This day"] = 1
+            catalog["Plants"]["irrigation"]["duration"] = Input["duration"]  
             File = open("stats.json", "w+") 
             File.write(json.dumps(stats, indent = 4))
             File.close()
-        if len(uri) != 0 and uri[0] =="health" : 
+        elif len(uri) != 0 and uri[0] =="health" : 
             with open("Catalog.json") as json_file : 
                 catalog = json.loads(json_file)
                 json_file.close()
-            catalog["userLists"]["Plants"]["health data"]["health status"] = Input["health"]
-            catalog["userLists"]["Plants"]["health data"]["Last Update"] = Input["time"]
+            catalog["Plants"]["health data"]["health status"] = Input["health"]
+            catalog["Plants"]["health data"]["Last Update"] = Input["time"]
             File = open("stats.json", "w+") 
             File.write(json.dumps(stats, indent = 4))
             File.close()
+        else : 
+            return cherrypy.HTTPError(400, "Bad Post Request")
             
              
                 
-                        
 
-    def PUT(self, *uri , **params):
-
-        if len(uri) != 0 and uri[0] =="catalog": 
-            with open("catalog.son") as json_file: 
-                catalog = json.load(json_file)
-                json_file.close()
-
-            if uri[1] == "threshold_moisture" : 
-                user = uri[1]
-                plant = uri[2]
-                threshold_min = params["threshold_min"]
-                threshold_max = params["threshold_max"]  
-                catalog["userList"]["user"]["Plants"][plant]["Min_Moisture"] = threshold_min     
-                catalog["userList"]["user"]["Plants"][plant]["Max_Moisture"] = threshold_max
-
-
-            #if uri[1] == "Irrigation Status":
-            #    user = uri[1]
-            #    plant = uri[2]
-            #    duration = params["duration"]
-            #    time = params["time"]
-            #    rep = params["reps"]
-            #    catalog["userList"]["user"]["Plants"][plant]["irrigation"]["time"] = time
-            #    catalog["userList"]["user"]["Plants"][plant]["irrigation"]["duration"] = duration
-            #    if rep : 
-            #        catalog["userList"]["user"]["Plants"][plant]["irrigation"]["Number of irrigation This day"]+=1
-            #    else : 
-            #        catalog["userList"]["user"]["Plants"][plant]["irrigation"]["Number of irrigation This day"] = 0
+         
                 
 
                 
@@ -197,7 +167,7 @@ if __name__=="__main__":
     cherrypy.engine.block()
 
 
-
+    
                 
 
             

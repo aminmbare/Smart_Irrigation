@@ -9,6 +9,7 @@
     "User_Name":"sarah",
     "user_ID":1,
     "ThingSpeak Field" : {"url": "https://api.thingspeak.com/update.json","api key": "MV7B8DSLUNAL5ZMX" , "channel_id": "2090142" },
+    "ChatBot": "6275431098:AAHCKqZl9UYPvmcwJ2c2atlJpkP-Wgy3q5c", 
     "topics":{
         "controller":{
             "temperature": "IOT_PROJECT/user1/plant1/temperature/device1",

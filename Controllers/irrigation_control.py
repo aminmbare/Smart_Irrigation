@@ -20,12 +20,14 @@ class Controller_Irrigation(Controller):
         self.__moisture = 0
         self.__temperature_state = False 
         self.__moisture_state = False 
+        self.__ValueType = "Irrigation" 
+        self.__unit = "boolean"
     def start(self)-> None:
         self.client.start()
     def publish(self,value,topic)-> None : 
-        message = {"Topic": topic , "ClientID":self.ClientID,
-                            "INFO":{"Type":self.ValueType , "Value":None , "Time":str('{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())),
-                            "Unit":self.unit}}
+        message = {"Topic": topic , "ClientID":self.__ClientID,
+                            "INFO":{"Type":self.__ValueType , "Value":None , "Time":str('{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())),
+                            "Unit":self.__unit}}
         message["INFO"]["value"]= value
         self.client.MyPublish(topic, message)
         
@@ -50,7 +52,7 @@ class Controller_Irrigation(Controller):
                     logging.info(f"Irrigation system is On for {time} s")
                     self.send_actuation(True)
                     self.__moisture_state , self.__temperature_state = False , False 
-                    requests.post('http://127.0.0.1:8080/health',json.dumps({"duration":time,"time":datetime.datetime.now().strftime("%m/%d/%y %H:%M:%S")}))  
+                    requests.post('http://127.0.0.1:8080/irrigation',json.dumps({"duration":time,"time":datetime.datetime.now().strftime("%m/%d/%y %H:%M:%S")}))  
                     
         time.sleep(120.0)            
     @staticmethod               
