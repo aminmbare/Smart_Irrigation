@@ -9,38 +9,38 @@
         "user_1":{
             "User_Name":"sarah",
             "user_ID":1,
-            "ThingSpeak Field" : {"url": "https://api.thingspeak.com/update.json","api key": "MV7B8DSLUNAL5ZMX" , "channel_id": "2090142" },
             "ChatBot": "6275431098:AAHCKqZl9UYPvmcwJ2c2atlJpkP-Wgy3q5c"
             
-        ,
-        "Plants":{ 
-            "plant_1":{
-                "plant_ID":1,
-                "Crop":"Tomato",
-                "Password":"",
-                "ChatID":"",
-                "irrigration":{"time":"","duration":"", "Number of irrigation This day": 0 },
-                "topics":{
-                    "actuator":{
-                        "irrigation": "IOT_PROJECT/user1/plant1/irrigation/device5"
-                    },
-                    "controller":{
-                        "temperature": "IOT_PROJECT/user1/plant1/temperature/device1",
-                        "moisture":"IOT_PROJECT/user1/plant1/moisture/device2",
-                        "humidity":"IOT_PROJECT/user1/plant1/humidity/device3",
-                        "image":"IOT_PROJECT/user1/plant1/image/device4"
+            ,
+            "Plants":{ 
+                "plant_1":{
+                    "ThingSpeak Field" : {"url": "https://api.thingspeak.com/update.json","api key": "MV7B8DSLUNAL5ZMX" , "channel_id": "2090142" },
+                    "plant_ID":1,
+                    "Crop":"Tomato",
+                    "Password":"",
+                    "ChatID":"",
+                    "irrigration":{"time":"","duration":"", "Number of irrigation This day": 0 },
+                    "health data":{"health status":"","Last Update":""},
+                    "topics":{
+                        "actuator":{
+                            "irrigation": "IOT_PROJECT/user1/plant1/irrigation/device5"
+                        },
+                        "controller":{
+                            "temperature": "IOT_PROJECT/user1/plant1/temperature/device1",
+                            "moisture":"IOT_PROJECT/user1/plant1/moisture/device2",
+                            "humidity":"IOT_PROJECT/user1/plant1/humidity/device3",
+                            "image":"IOT_PROJECT/user1/plant1/image/device4"
 
-                    },
-                    "statistics": {
-                        "temperature":"IOT_PROJECT/user1/plant1/temperature/statistics",
-                        "moisture":"IOT_PROJECT/user1/plant1/moisture/statistics",
-                        "humidity":"IOT_PROJECT/user1/plant1/humidity/statistics"
+                        },
+                        "statistics": {
+                            "temperature":"IOT_PROJECT/user1/plant1/temperature/statistics",
+                            "moisture":"IOT_PROJECT/user1/plant1/moisture/statistics",
+                            "humidity":"IOT_PROJECT/user1/plant1/humidity/statistics"
 
-                    }
-                },
+                        }
+                },  
                 
-                "health data":{"health status":"","Last Update":""},
-                "Devices":{
+                    "Devices":{
                         "Device_1":{
                             "Device_ID":1,
                             "Device_Name":"DHT1",
@@ -96,8 +96,8 @@
                                 }
                             }
                         }   
-                        }
-                    }   
+                    }
+                }   
 
             }
         }
@@ -107,34 +107,34 @@
             "user_ID":1,
             "ThingSpeak Field" : {"url": "https://api.thingspeak.com/update.json","api key": "MV7B8DSLUNAL5ZMX" , "channel_id": "2090142" },
             "ChatBot": "6275431098:AAHCKqZl9UYPvmcwJ2c2atlJpkP-Wgy3q5c",
-        "Plants":{ 
-            "Plant ID":1,
-            "Crop":"Tomato",
-            "Password":"",
-            "ChatID":"",
-            "irrigration":{"time":"","duration":"", "Number of irrigation This day": 0 },
+            "Plants":{ 
+                "Plant ID":1,
+                "Crop":"Tomato",
+                "Password":"",
+                "ChatID":"",
+                "irrigration":{"time":"","duration":"", "Number of irrigation This day": 0 },
+
+                "health data":{"health status":"","Last Update":""},
             
-            "health data":{"health status":"","Last Update":""},
-            
-            "topics":{
-                "actuator":{
-                    "irrigation": "IOT_PROJECT/user1/plant1/irrigation/device5"
-                },
-                "controller":{
-                    "temperature": "IOT_PROJECT/user1/plant1/temperature/device1",
-                    "moisture":"IOT_PROJECT/user1/plant1/moisture/device2",
-                    "humidity":"IOT_PROJECT/user1/plant1/humidity/device3",
-                    "picture":"IOT_PROJECT/user1/plant1/image/device4", 
-                    "irrigation": "IOT_PROJECT/user1/plant1/irrigation/device5"
-                },
-                "statistics": {
-                    "temperature":"IOT_PROJECT/user1/plant1/temperature/statistics",
-                    "moisture":"IOT_PROJECT/user1/plant1/moisture/statistics",
-                    "humidity":"IOT_PROJECT/user1/plant1/humidity/statistics",
-                    "health":"IOT_PROJECT/user1/plant1/health/statistics", 
-                    "irrigation":"IOT_PROJECT/user1/plant1/irrigation/statistics"
-                },
-            "Devices":{
+                "topics":{
+                    "actuator":{
+                        "irrigation": "IOT_PROJECT/user1/plant1/irrigation/device5"
+                    },
+                    "controller":{
+                        "temperature": "IOT_PROJECT/user1/plant1/temperature/device1",
+                        "moisture":"IOT_PROJECT/user1/plant1/moisture/device2",
+                        "humidity":"IOT_PROJECT/user1/plant1/humidity/device3",
+                        "picture":"IOT_PROJECT/user1/plant1/image/device4", 
+                        "irrigation": "IOT_PROJECT/user1/plant1/irrigation/device5"
+                    },
+                    "statistics": {
+                        "temperature":"IOT_PROJECT/user1/plant1/temperature/statistics",
+                        "moisture":"IOT_PROJECT/user1/plant1/moisture/statistics",
+                        "humidity":"IOT_PROJECT/user1/plant1/humidity/statistics",
+                        "health":"IOT_PROJECT/user1/plant1/health/statistics", 
+                        "irrigation":"IOT_PROJECT/user1/plant1/irrigation/statistics"
+                    },
+                "Devices":{
                         "Device_1":{
                             "Device_ID":1,
                             "Device_Name":"DHT1",
