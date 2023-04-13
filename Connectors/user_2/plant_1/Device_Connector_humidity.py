@@ -14,12 +14,13 @@ class device_connector_humidity(Abstract_Device_Connector):
         self.__root = "IOT_PROJECT" 
         self.__UserID = UserID 
         self.__PlantID = PlantID 
-        self.__DeviceID = DeviceID 
+        self.__DeviceID = DeviceID
+        self.val_type = "humidity"
         self.topic = self.__root +"/"+ self.__UserID +"/" + self.__PlantID+"/"+self.val_type\
                      +"/" + self.__DeviceID
         self.message = {"Topic": self.__topic , "ClientID":self.ClientID,
                             "INFO":{"Type":self.val_type , "Value":None , "Time":'',
-                            "Unit":self.unit}}
+                            "Unit":'%'}}
 
 
         self.client = MyMQTT(self.ClientID, self.broker, self.port, None)

@@ -10,8 +10,9 @@ import pickle
 from PIL import Image
 
 class Controller_health(Controller): 
-    def __init__(self)->None: 
+    def __init__(self,)->None: 
         super().__init__()
+        
         self.__ClientID = "Controller_health"
         self.__client = MyMQTT(self.__clientID,self.broker,None)
     

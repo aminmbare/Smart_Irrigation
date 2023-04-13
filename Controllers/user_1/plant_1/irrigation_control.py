@@ -88,7 +88,7 @@ if __name__ == "__main__":
     UserID = "user"+str(UserID)      
     PlantID = "plant"+str(PlantID)
     
-    controller  = Controller_Irrigation()
+    controller  = Controller_Irrigation(UserID,PlantID)
     controller.start()
     controller.subscribe()
     while True  : 

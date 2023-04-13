@@ -47,7 +47,7 @@ if __name__ == "__main__":
         PlantID = info["Plant_ID"]
         f.close()
     UserID = "user"+str(UserID)     
-    PlantID = "plant1"+str(PlantID)
+    PlantID = "plant"+str(PlantID)
     DeviceID =  "device1"
     temperature = device_connector_temp( UserID, PlantID, DeviceID)
     temperature.start()
