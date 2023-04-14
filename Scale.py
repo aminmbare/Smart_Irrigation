@@ -60,16 +60,27 @@ class Scaler(object):
         new_user_path = os.path.join(self.controller_path, self.dictionary["User_ID"])
         os.mkdir(new_user_path)
         # update catalog 
-        with open("catalog.json", "w") as f: 
+        with open("catalog.json", "w+") as f: 
             json.dump(self.catalog, f)
             f.close()      
     
-    def add_plant(self,num_plants : int,ID: int)-> None:
-        
+    def add_plant(self,num_plants : int,ID: int,flag : bool )-> None:
+
+            if flag : 
+                old_plants = len(self.catalog["Users"][f"user{ID}"]["Plants"])
+                for new_plant_id in self.dictionary:
+
+                    self.catalog["Users"][f"user_{ID}"]["Plants"][new_plant_id] = self.dictionary[new_plant_id]
+                with open("catalog.json", "w+") as f: 
+                    logging.info("Catalog is being updated")
+                    json.dump(self.catalog, f)
+                    f.close() 
+            else : 
+                old_plants = 0
             path = os.path.join(self.connector_path, f"user_{ID}")
             logging.info("Controller path is: %s", path)
             for i in range(num_plants): 
-                new_plant_path = os.path.join(path, f"plant_{i+1}")
+                new_plant_path = os.path.join(path, f"plant_{old_plants+i+1}")
                 os.mkdir(new_plant_path)
                 for file , file_name in self.Connector_list:
                     logging.info(f"File {file_name} is being added to the Connector folder for user {ID} ")
@@ -77,7 +88,9 @@ class Scaler(object):
                         f.write(file)
                         f.close()
                 with open(os.path.join(new_plant_path, "info.json"), "w") as f:
-                    json.dumps(self.info)
+                    self.info["Plant_ID"] = f"plant_{i+1+old_plants}"
+                    self.info["User_ID"] = f"user_{ID}"
+                    json.dumps()
                     f.close()
             path = os.path.join(self.controller_path, f"user_{ID}")
             
@@ -93,4 +106,5 @@ class Scaler(object):
                 with open(os.path.join(new_plant_path, "info.json"), "w") as f:
                     json.dumps(self.info)
                     f.close()   
+                
                     
