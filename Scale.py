@@ -43,7 +43,7 @@ class Scaler(object):
             self.controller_path = os.path.join(path, "Controllers")
             self.Connector_list = [(self.device_connector_humidity,"Device_Connector_humidity.py"), (self.device_connector_moisturemoisture,"Device_Connector_moisture.py"), (self.device_connector_temperature,"Device_Connector_temperature.py")]
             self.Controller_list = [(self.irrigation_controller,"Irrigation_Controller.py"), (self.heath_controller,"Heating_Controller.py")]
-            
+        
     def add_user(self)-> None: 
         # add user to catalog 
         new_user_id = "user"+str(len(self.catalog["Users"]))
@@ -90,6 +90,7 @@ class Scaler(object):
                 with open(os.path.join(new_plant_path, "info.json"), "w") as f:
                     self.info["Plant_ID"] = f"plant_{i+1+old_plants}"
                     self.info["User_ID"] = f"user_{ID}"
+
                     json.dumps()
                     f.close()
             path = os.path.join(self.controller_path, f"user_{ID}")

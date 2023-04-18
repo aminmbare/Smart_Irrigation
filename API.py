@@ -48,58 +48,71 @@ class CatalogManager:
                 user = uri[2]
                 plant = uri[3]
 
-                if user in catalog['Users']:
-                    if plant in catalog['Users'][user]["Plants"]:
-                        if program in catalog['Users'][user]["Plants"][plant]['topics']:
-                            if Val_type in catalog['Users'][user]["Plants"][plant]['topics'][program]:
-                                logging.info("Topic found for %s and %s" %(program, Val_type))
-                                return json.dumps({"topic":catalog['Users'][user]['topics']["Plants"][plant][program][Val_type]}) 
-                            else: 
+                for _user in catalog['Users']:
+                    if int(user[-1]) == _user['ID']:
+                        if plant in catalog['Users'][user]["Plants"]:
+                            if program in _user["Plants"][plant]['topics']:
+                                for  _plant in _user["Plants"]: 
+                                    if _plant["ID"] == int(plant[-1]): 
+                                        if Val_type in _plant['topics'][program]:
+                                            logging.info("Topic found for %s and %s" %(program, Val_type))
+                                            return json.dumps({"topic":_plant['topics'][program][Val_type]}) 
+                                        else: 
+                                            return cherrypy.HTTPError(400, f"Topic not found for {program} and {Val_type}")
+                            else : 
                                 return cherrypy.HTTPError(400, f"Topic not found for {program} and {Val_type}")
-                        else : 
-                            return cherrypy.HTTPError(400, f"Topic not found for {program} and {Val_type}")
-                    
+                    else : 
+                        continue 
 
 
             elif uri[1] =="user_info":
-                user = dict()
-                if uri[2] in Catalog["Users"]:  
-                        user["name"] = Catalog["Users"][uri[2]]["Name"]
-                        user["ID"] = Catalog["Users"][uri[2]]["ID"]
+                user = dict()               
+                id = int(uri[2][-1])
+                for _user in catalog['Users']:
+                    if id == _user['ID']:
+                        user["name"] = _user["Name"]
+                        user["ID"] = _user["ID"]
                         logging.info("Irrigation status found for %s and %s" %(user))
                         return json.dumps(user)   
-                else : 
-                    return cherrypy.HTTPError(400, f"User not found")
+               
+                return cherrypy.HTTPError(400, f"User not found")
                 
            
             elif uri[1] == "Irrigation_Status":
                 user = uri[2]
                 plant = uri[3]
-                if plant in Catalog["Users"][user]["Plants"]:
-                    logging.info("Irrigation status found for %s and %s" %(user, plant))
-                    return json.dumps({"Irrigation status":Catalog["Users"][user]["Plants"][plant]["Irrigation"]})
-                else : 
-                    return cherrypy.HTTPError(400, f"Plant not found")
+                for _user in catalog['Users']:
+                    if _user["ID"] == int(user[-1]):
+                        for _plant in _user["Plants"]:
+                            if _plant["ID"] == int(plant[-1]):
+                                logging.info("Irrigation status found for %s and %s" %(user, plant))
+                                return json.dumps({"Irrigation status":_plant["Irrigation"]})
+                
+                return cherrypy.HTTPError(400, f"Error")
           
           
             elif uri[1] == "Health_Status":
                 user = uri[2]
                 plant = uri[3]
-                if plant in Catalog["Users"][user]["Plants"]:
-                    logging.info("health status found for %s and %s" %(user, plant))
-                    return json.dumps({"Irrigation status":Catalog["Users"][user]["Plants"][plant]["health data"]})
-                else : 
-                    return cherrypy.HTTPError(400, f"Plant not found")
+                for _user in catalog['Users']:
+                    if _user["ID"] == int(user[-1]):
+                        for _plant in _user["Plants"]:
+                            if _plant["ID"] == int(plant[-1]):
+                                logging.info("Irrigation status found for %s and %s" %(user, plant))
+                                return json.dumps({"Health status":_plant["Health Status"]})
+                 
+                return cherrypy.HTTPError(400, f"Error")
                 
                
             elif uri[1] == "ChatBot": 
                 user = uri[2]
                 plant = uri[3]
-                if plant in Catalog["Users"][user]["Plants"]:
-                    logging.info("ChatBot found for %s and %s" %(user, plant))
-                    return json.dumps({"ChatBot":Catalog["Users"][user]["Plants"][plant]["ChatBot"]})
-                else : 
-                    cherrypy.HTTPError(400, f"Plant not found")
+                for _user in catalog['Users']:
+                    if _user["ID"] == int(user[-1]):
+                        for _plant in _user["Plants"]:
+                            if _plant["ID"] == int(plant[-1]):
+                                logging.info("Irrigation status found for %s and %s" %(user, plant))
+                                return json.dumps({"Chatbot":_plant["ChatBot"]})
             else : 
                 cherrypy.HTTPError(400, "Bad Catalog Request")
                 
@@ -109,7 +122,7 @@ class CatalogManager:
                 catalog = json.load(json_file)
                 json_file.close()
 
-            with open() as json_file: 
+            with open("") as json_file: 
                 stats = json.load(json_file)
                 json_file.close()
             
@@ -137,12 +150,11 @@ class CatalogManager:
                 plant =  param["plant"]
             last_update =  datetime.strptime(catalog["Users"][user]["Plants"][plant]["irrigation"]["time"],'%m/%d/%y %H:%M:%S')
             new_update = datetime.strptime(Input["time"],'%m/%d/%y %H:%M:%S')
-            if last_update.day ==  new_update.day : 
-                
+            if last_update.day ==  new_update.day :              
                 catalog["Users"][user]["Plants"][plant]["irrigation"]["Number of irrigation This day"] += 1
             else : 
                 catalog["Users"][user]["Plants"][plant]["irrigation"]["Number of irrigation This day"] = 1
-            catalog["Plants"]["irrigation"]["duration"] = Input["duration"]  
+            catalog["Users"][user]["Plants"][plant]["irrigation"]["duration"] = Input["duration"]  
             with open("catalog_test.json", "w") as json_file:
                 json.dump(catalog, json_file, indent=4)
                 json_file.close()
