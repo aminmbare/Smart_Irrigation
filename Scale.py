@@ -56,7 +56,7 @@ class Scaler(object):
         os.mkdir(new_user_path_controller)           
         # update catalog 
         with open("catalog.json", "w+") as f: 
-            json.dump(catalog, f)
+            json.dump(catalog, f,indent=4)
             f.close()    
           
     def add_folder(self, user_key : int)-> bool:
@@ -109,10 +109,10 @@ class Scaler(object):
                 with open(os.path.join(new_plant_path, "info.json"), "w") as f:
                     self.info["Plant_ID"] = f"plant_{plant_key}"
                     self.info["User_ID"] = f"user_{user_key}"
-                    json.dumps()
+                    json.dumps(self.info,indent =4 )
                     f.close()
         with open("catalog.json", "w+") as f:
-            json.dump(catalog, f)
+            json.dump(catalog, f,indent= 4)
             f.close()   
         return True
     def delete_user(self, user_key : str)-> bool:
@@ -154,7 +154,7 @@ class Scaler(object):
         shutil.rmtree(path)
         # update catalog
         with open("catalog.json", "w+") as f:
-            json.dump(catalog, f)
+            json.dump(catalog, f,indent = 4)
             f.close()
         return True
         
