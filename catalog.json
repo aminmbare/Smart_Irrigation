@@ -5,171 +5,173 @@
     "broker":"broker.hivemq.com",
     "port":1883,
     "base_Topic":"IOT_PROJECT",
-    "Users":[
+    "Users":{ 
+        "1": 
         {
             "User_Name":"sarah",
             "user_ID":1,
             "ThingSpeak Field" : {"url": "https://api.thingspeak.com/update.json","api key": "MV7B8DSLUNAL5ZMX" , "channel_id": "2090142" },
             "ChatBot": "6275431098:AAHCKqZl9UYPvmcwJ2c2atlJpkP-Wgy3q5c",
-            "Plants":[  
-                        {
-                        "Plant ID":1,
-                        "Crop":"Tomato",
-                        "Password":"",
-                        "ChatID":"",
-                        "irrigration":{"time":"","duration":"", "Number of irrigation This day": 0 },
-                        "health data":{"health status":"","Last Update":""},
-                        "topics":{
-                            "actuator":{
-                                "irrigation": "IOT_PROJECT/user1/plant1/irrigation/device5"
+            "Plants":{  "1": 
+                            {
+                            "Plant ID":1,
+                            "Crop":"Tomato",
+                            "Password":"",
+                            "ChatID":"",
+                            "irrigration":{"time":"","duration":"", "Number of irrigation This day": 0 },
+                            "health data":{"health status":"","Last Update":""},
+                            "topics":{
+                                "actuator":{
+                                    "irrigation": "IOT_PROJECT/user1/plant1/irrigation/device5"
+                                    },
+                                "Sensor":{
+                                    "temperature": "IOT_PROJECT/user1/plant1/temperature/device1",
+                                    "moisture":"IOT_PROJECT/user1/plant1/moisture/device2",
+                                    "humidity":"IOT_PROJECT/user1/plant1/humidity/device3",
+                                    "image":"IOT_PROJECT/user1/plant1/image/device4"
+
+                                }
+                            
+                            },
+
+                            "Devices":{
+                                "Device_1":{
+                                    "Device_ID":1,
+                                    "Device_Name":"DHT1",
+                                    "Measure_Type":["temperature"],
+                                    "Available_Service":{
+                                        "MQTT": {
+                                            "Service_IP":"broker.hivemq.com",
+                                            "topic":"IOT_PROJECT/user1/plant1/temperature"
+                                        }
+                                    }
                                 },
-                            "Sensor":{
-                                "temperature": "IOT_PROJECT/user1/plant1/temperature/device1",
-                                "moisture":"IOT_PROJECT/user1/plant1/moisture/device2",
-                                "humidity":"IOT_PROJECT/user1/plant1/humidity/device3",
-                                "image":"IOT_PROJECT/user1/plant1/image/device4"
-
+                                "Device_2":{
+                                    "Device_ID":2,
+                                    "Device_Name":"Moisture sensor",
+                                    "Measure_Type":["moisture"],
+                                    "Available_Service":{
+                                        "MQTT": {
+                                            "Service_IP":"broker.hivemq.com",
+                                            "topic":"IOT_PROJECT/user1/plant1/moisture"
+                                        }
+                                    }
+                                },
+                                "Device_3":{
+                                    "Device_ID":3,
+                                    "Device_Name":"humidity",
+                                    "Measure_Type":["humidity"],
+                                    "Available_Service":{
+                                        "MQTT": {
+                                            "Service_IP":"broker.hivemq.com",
+                                            "topic":"IOT_PROJECT/user1/plant1/humidity"
+                                        }
+                                    }
+                                },    
+                                "Device_4":{
+                                    "Device_4":4,
+                                    "Device_Name":"Pi Camera",
+                                    "Measure_type":["Image"],
+                                    "Available_Service":{
+                                        "MQTT": {
+                                            "Service_IP":"broker.hivemq.com",
+                                            "topic":"IOT_PROJECT/user1/plant1/image"
+                                        }
+                                    }
+                                },
+                                "Device_5":{
+                                    "Device_4":4,
+                                    "Device_Name":"Water Pump",
+                                    "Measure_type":["irrigation"],
+                                    "Available_Service":{
+                                        "MQTT": {
+                                            "Service_IP":"broker.hivemq.com",
+                                            "topic":"IOT_PROJECT/user1/plant1/image"
+                                        }
+                                    }
+                                }   
                             }
-                           
-                        },
-
-                        "Devices":{
-                            "Device_1":{
-                                "Device_ID":1,
-                                "Device_Name":"DHT1",
-                                "Measure_Type":["temperature"],
-                                "Available_Service":{
-                                    "MQTT": {
-                                        "Service_IP":"broker.hivemq.com",
-                                        "topic":"IOT_PROJECT/user1/plant1/temperature"
-                                    }
-                                }
-                            },
-                            "Device_2":{
-                                "Device_ID":2,
-                                "Device_Name":"Moisture sensor",
-                                "Measure_Type":["moisture"],
-                                "Available_Service":{
-                                    "MQTT": {
-                                        "Service_IP":"broker.hivemq.com",
-                                        "topic":"IOT_PROJECT/user1/plant1/moisture"
-                                    }
-                                }
-                            },
-                            "Device_3":{
-                                "Device_ID":3,
-                                "Device_Name":"humidity",
-                                "Measure_Type":["humidity"],
-                                "Available_Service":{
-                                    "MQTT": {
-                                        "Service_IP":"broker.hivemq.com",
-                                        "topic":"IOT_PROJECT/user1/plant1/humidity"
-                                    }
-                                }
-                            },    
-                            "Device_4":{
-                                "Device_4":4,
-                                "Device_Name":"Pi Camera",
-                                "Measure_type":["Image"],
-                                "Available_Service":{
-                                    "MQTT": {
-                                        "Service_IP":"broker.hivemq.com",
-                                        "topic":"IOT_PROJECT/user1/plant1/image"
-                                    }
-                                }
-                            },
-                            "Device_5":{
-                                "Device_4":4,
-                                "Device_Name":"Water Pump",
-                                "Measure_type":["irrigation"],
-                                "Available_Service":{
-                                    "MQTT": {
-                                        "Service_IP":"broker.hivemq.com",
-                                        "topic":"IOT_PROJECT/user1/plant1/image"
-                                    }
-                                }
-                            }   
                         }
-                    }]   
-            }
-        
-        ,
-        {
+                }
+        },
+        "2": {
             "User_Name":"sarah",
             "user_ID":1,
             "ThingSpeak Field" : {"url": "https://api.thingspeak.com/update.json","api key": "MV7B8DSLUNAL5ZMX" , "channel_id": "2090142" },
             "ChatBot": "6275431098:AAHCKqZl9UYPvmcwJ2c2atlJpkP-Wgy3q5c",
-            "Plants": 
-                [{
-                    "Plant ID":1,
-                    "Crop":"Tomato",
-                    "Password":"",
-                    "ChatID":"",
-                    "irrigration":{"time":"","duration":"", "Number of irrigation This day": 0 },
-                    "health data":{"health status":"","Last Update":""},
-                    "topics":{
-                        "actuator":{
-                            "irrigation": "IOT_PROJECT/user2/plant1/irrigation/device5"
-                        },
-                        "Sensor":{
-                            "temperature": "IOT_PROJECT/user2/plant1/temperature/device1",
-                            "moisture":"IOT_PROJECT/user2/plant1/moisture/device2",
-                            "humidity":"IOT_PROJECT/user2/plant1/humidity/device3",
-                            "picture":"IOT_PROJECT/user2/plant1/image/device4"
-                        }
-                
-                    },
-                    "Devices":{
-                        "Device1":{
-                            "Device_ID":1,
-                            "Device_Name":"DHT1",
-                            "Measure_Type":["temperature"],
-                            "Available_Service":{
-                                "MQTT": {
-                                    "Service_IP":"broker.hivemq.com",
-                                    "topic":"IOT_PROJECT/user1/plant1/temperature"
+            "Plants": {
+                        "1":{
+                            "Plant ID":1,
+                            "Crop":"Tomato",
+                            "Password":"",
+                            "ChatID":"",
+                            "irrigration":{"time":"","duration":"", "Number of irrigation This day": 0 },
+                            "health data":{"health status":"","Last Update":""},
+                            "topics":{
+                                "actuator":{
+                                    "irrigation": "IOT_PROJECT/user2/plant1/irrigation/device5"
+                                },
+                                "Sensor":{
+                                    "temperature": "IOT_PROJECT/user2/plant1/temperature/device1",
+                                    "moisture":"IOT_PROJECT/user2/plant1/moisture/device2",
+                                    "humidity":"IOT_PROJECT/user2/plant1/humidity/device3",
+                                    "picture":"IOT_PROJECT/user2/plant1/image/device4"
                                 }
-                            }
-                        },
-                        "Device2":{
-                            "Device_ID":2,
-                            "Device_Name":"Moisture sensor",
-                            "Measure_Type":["moisture"],
-                            "Available_Service":{
-                                "MQTT": {
-                                    "Service_IP":"broker.hivemq.com",
-                                    "topic":"IOT_PROJECT/user1/plant1/moisture"
-                                }
-                            }
+                            
+                            },
+                            "Devices":{
+                                "1":{
+                                    "Device_ID":1,
+                                    "Device_Name":"DHT1",
+                                    "Measure_Type":["temperature"],
+                                    "Available_Service":{
+                                        "MQTT": {
+                                            "Service_IP":"broker.hivemq.com",
+                                            "topic":"IOT_PROJECT/user1/plant1/temperature"
+                                        }
+                                    }
+                                },
+                                "2":{
+                                    "Device_ID":2,
+                                    "Device_Name":"Moisture sensor",
+                                    "Measure_Type":["moisture"],
+                                    "Available_Service":{
+                                        "MQTT": {
+                                            "Service_IP":"broker.hivemq.com",
+                                            "topic":"IOT_PROJECT/user1/plant1/moisture"
+                                        }
+                                    }
 
-                        },
-                        "Device3":{
-                            "Device_ID":3,
-                            "Device_Name":"humidity",
-                            "Measure_Type":["humidity"],
-                            "Available_Service":{
-                                "MQTT": {
-                                    "Service_IP":"broker.hivemq.com",
-                                    "topic":"IOT_PROJECT/user1/plant1/humidity"
-                                }
-                            }
-                        },    
-                        "Device4":{
-                            "Device_ID":4,
-                            "Device_Name":"Pi Camera",
-                            "Measure_type":"Image",
-                            "Available_Service":{
-                                "MQTT": {
-                                    "Service_IP":"broker.hivemq.com",
-                                    "topic":"IOT_PROJECT/user1/plant1/image"
-                                }
-                            }
-                        }    
-                    } 
-                }]
-        }]   
-
-}
+                                },
+                                "3":{
+                                    "Device_ID":3,
+                                    "Device_Name":"humidity",
+                                    "Measure_Type":["humidity"],
+                                    "Available_Service":{
+                                        "MQTT": {
+                                            "Service_IP":"broker.hivemq.com",
+                                            "topic":"IOT_PROJECT/user1/plant1/humidity"
+                                        }
+                                    }
+                                },    
+                                "4":{
+                                    "Device_ID":4,
+                                    "Device_Name":"Pi Camera",
+                                    "Measure_type":"Image",
+                                    "Available_Service":{
+                                        "MQTT": {
+                                            "Service_IP":"broker.hivemq.com",
+                                            "topic":"IOT_PROJECT/user1/plant1/image"
+                                        }
+                                    }
+                                }    
+                            } 
+                        }   
+                    
+                    }
+            }   
+        }
+}   
     
 
 
