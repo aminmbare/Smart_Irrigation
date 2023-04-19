@@ -2,6 +2,8 @@ import logging
 import datetime 
 import json 
 import os 
+import shutil
+
 
 #  Upon receiving a request to add a user or plant for a user 
 # this class will modifify catalog.json file 
@@ -47,15 +49,11 @@ class Scaler(object):
             f.close()
         ID = dictionary["User_ID"]
         catalog["Users"].append(dictionary)
-        number_of_plants = len(dictionary["Plants"])
-        
         # create a new folder for the user 
         new_user_path_connector = os.path.join(self.connector_path,f"user_{ID}")
         new_user_path_controller = os.path.join(self.controller_path,f"user_{ID}" )
         os.mkdir(new_user_path_connector)
-        os.mkdir(new_user_path_controller)    
- 
-        
+        os.mkdir(new_user_path_controller)           
         # update catalog 
         with open("catalog.json", "w+") as f: 
             json.dump(catalog, f)
@@ -112,6 +110,26 @@ class Scaler(object):
                     self.info["User_ID"] = f"user_{ID}"
                     json.dumps()
                     f.close()
+    def delete_user(self, ID : int)-> None:
+        # delete user from catalog
+        with open("catalog.json", "r") as f:
+            catalog = json.load(f)
+            f.close()
+        for _user in catalog["Users"]:
+            if _user["User_ID"] == ID:
+                catalog["Users"].remove(_user)
+                break
+        # delete user folder
+        path = os.path.join(self.connector_path, f"user_{ID}")
+        shutil.rmtree(path)
+        path = os.path.join(self.controller_path, f"user_{ID}")
+        shutil.rmtree(path)
+        # update catalog
+        with open("catalog.json", "w+") as f:
+            json.dump(catalog, f)
+            f.close()
+        
+        
         
 
         

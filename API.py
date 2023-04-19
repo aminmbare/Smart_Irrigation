@@ -8,6 +8,7 @@ from Statistics.stats_temperature import record_temp
 from Statistics.stats_humidity import record_humidity
 import os 
 import logging
+from .Scale import Scaler
 
 
 
@@ -117,21 +118,6 @@ class CatalogManager:
                 cherrypy.HTTPError(400, "Bad Catalog Request")
                 
 
-        elif len(uri) != 0 and uri[0] == 'statistics' : 
-            with open("catalog.json") as json_file: 
-                catalog = json.load(json_file)
-                json_file.close()
-
-            with open("") as json_file: 
-                stats = json.load(json_file)
-                json_file.close()
-            
-            temp_stats = self.stats_temp(uri[0], uri[1],stats["Temperature"])
-            moist_stats = self.stats_moisture(uri[0], uri[1],stats["Moisture"])    
-            humidity_stats = self.stats_humidity(uri[0], uri[1],stats["Humidity"])
-
-            return json.dumps({"temperature": temp_stats, "Moisture":moist_stats , "Humidity":humidity_stats})
-
         else : 
             return cherrypy.HTTPError(400, "Bad Get Request")    
                     
@@ -174,13 +160,32 @@ class CatalogManager:
         else : 
             return cherrypy.HTTPError(400, "Bad Post Request")
     
-    #def PUT(self,*uri,**param):
-    #    body = cherrypy.request.body.read()
-    #    Input = json.load(body)
-    #    if len(uri)!= 0 and uri[0] == "add_user": 
-            
-    #@staticmethod        
-    #def        
+    def PUT(self,*uri,**param):
+        body = cherrypy.request.body.read()
+        Input = json.load(body)
+        Sca = Scaler()
+        if len(uri)!= 0 and uri[0] == "add_user": 
+            Sca.add_user(Input)
+            return "User added"
+        if len(uri)!= 0 and uri[0] == "add_plant": 
+            user_ID=param["user"]
+            Sca.add_folder()
+            Sca.add_plant(Input,user_ID)
+            return "Plant added"
+    def DELETE(self,*uri, **param): 
+        Sca = Scaler()
+        if len(uri)!= 0 and uri[0] == "delete_user": 
+            user_ID=param["user"]
+            Sca.delete_user(user_ID)
+            return "User deleted"
+        if len(uri)!= 0 and uri[0] == "delete_plant": 
+            user_ID=param["user"]
+            plant_ID=param["plant"]
+            Sca.delete_plant(user_ID,plant_ID)
+            return "Plant deleted"
+        
+           
+   
                 
 
          
