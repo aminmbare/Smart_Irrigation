@@ -62,8 +62,7 @@ class Scaler(object):
         with open("catalog.json", "r") as f:
             catalog = json.load(f)
             f.close()
-        
-           
+     
         number_of_plants = len(catalog["Users"][user_key]["Plants"])
         
         new_plant_path_connector = os.path.join(self.connector_path,f"user_{user_key}", f"plant_{number_of_plants+1}")

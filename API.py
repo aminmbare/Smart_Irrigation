@@ -5,7 +5,7 @@ import cherrypy
 from datetime import datetime
 import os 
 import logging
-from .Scale import Scaler
+from Scale import Scaler
 
 
 
