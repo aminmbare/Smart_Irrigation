@@ -160,20 +160,22 @@ class CatalogManager:
     def PUT(self,*uri,**param):
         body = cherrypy.request.json
 
-        logging.info(body)
+
         #Input = json.load(body)
 
-        logging.info(body["User_Name"])
+        #logging.info(body["User_Name"])
         Sca = Scaler()
         if len(uri)!= 0 and uri[0] == "add_user": 
             Sca.add_user(body)
             return "User added"
         if len(uri)!= 0 and uri[0] == "add_plant": 
-            user_ID=param["user"]
-            Sca.add_folder()
-            Sca.add_plant(body,user_ID)
-            return "Plant added"
-    
+            user_key=param["user"]
+            if Sca.add_folder(user_key):
+                if Sca.add_plant(user_key,body):
+                    return "Plant added"
+                else : 
+                    return cherrypy.HTTPError(400, "Error")
+            return cherrypy.HTTPError(400, "Error")
     
     
     def DELETE(self,*uri, **param): 

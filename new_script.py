@@ -9,7 +9,5 @@ user =  {
     "Plants":{}
  }
 
-with open("catalog_test.json", "w+") as f:
-    catalog["Users"]["3"] = user
-    json.dump(catalog, f,indent= 4)
-    f.close()
+if "2" in catalog["Users"]:
+    print("User already exists")

@@ -13,14 +13,14 @@ class Controller_health(Controller):
     def __init__(self,)->None: 
         super().__init__()
         
-        self.__ClientID = "Controller_health"
-        self.__client = MyMQTT(self.__clientID,self.broker,None)
+        self._ClientID = "Controller_health"
+        self._client = MyMQTT(self.__ClientID,self.broker,None)
     
     
     def start(self)-> None:
-        self.client.start()
+        self._client.start()
     def stop(self)-> None : 
-        self.client.stop() 
+        self._client.stop() 
     
     def subscribe(self): 
         topic = (requests.get('http://127.0.0.1:8080/catalog/all_topics?program=Sensor&type=camera').json())["topic"] 

@@ -59,7 +59,7 @@ class Scaler(object):
             json.dump(catalog, f,indent=4)
             f.close()    
           
-    def add_folder(self, user_key : int)-> bool:
+    def add_folder(self, user_key : str)-> bool:
         with open("catalog.json", "r") as f:
             catalog = json.load(f)
             f.close()
@@ -71,42 +71,48 @@ class Scaler(object):
         os.mkdir(new_plant_path_connector)
         new_plant_path_controller = os.path.join(self.controller_path,f"user_{user_key}", f"plant_{number_of_plants+1}")
         os.mkdir(new_plant_path_controller)
+        return True
     
-    def add_plant(self,user_key: int,dictionary : dict)-> bool:
+    def add_plant(self,user_key: str,dictionary : dict)-> bool:
         # add plant to catalog
         with open("catalog.json", "r") as f:
             catalog = json.load(f)
             f.close()
-        number_of_plants = len(catalog["Users"][user_key]["Plants"])
+        
+        plant_key = len(catalog["Users"][user_key]["Plants"]) +1
+
+        logging.info("User key is: %s", user_key)
         if user_key in catalog["Users"]:
-            catalog["Users"][user_key]["Plants"][f"plant_{number_of_plants+1}"] = dictionary
+            catalog["Users"][user_key]["Plants"][f"plant_{plant_key}"] = dictionary
         else : 
             return False 
+ 
         
-        number_of_plants = len(catalog["Users"][user_key]["Plants"])  
-        plant_key = number_of_plants+1
         
-        path = os.path.join(self.connector_path, f"user_{user_key}")
-        logging.info("Controller path is: %s", path)
-    
-        new_plant_path = os.path.join(path, f"plant_{plant_key}")
+        connector_path = os.path.join(self.connector_path, f"user_{user_key}")
+        logging.info("Connector path is: %s", connector_path)   
+        new_plant_path_connector = os.path.join(connector_path, f"plant_{plant_key}")
+        
+        controller_path = os.path.join(self.controller_path, f"user_{user_key}")
+        logging.info("Controller path is: %s", controller_path)   
+        new_plant_path_controller = os.path.join(controller_path, f"plant_{plant_key}")
 
         for file , file_name in self.Connector_list:
             logging.info(f"File {file_name} is being added to the Connector folder for user {user_key} ")
-            with open(os.path.join(new_plant_path, file_name), "w") as f:
+            with open(os.path.join(new_plant_path_connector, file_name), "w") as f:
                 f.write(file)
                 f.close()
-            with open(os.path.join(new_plant_path, "info.json"), "w") as f:
+            with open(os.path.join(new_plant_path_connector, "info.json"), "w") as f:
                     self.info["Plant_ID"] = f"plant_{plant_key}"
                     self.info["User_ID"] = f"user_{user_key}"
-                    json.dumps()
+                    json.dumps(self.info)
                     f.close()
         for file , file_name in self.Controller_list:
-                logging.info(f"File {file_name} is being added to the Controller folder for user {ID} ")
-                with open(os.path.join(new_plant_path, file_name), "w") as f:
+                logging.info(f"File {file_name} is being added to the Controller folder for user {user_key} ")
+                with open(os.path.join(new_plant_path_controller, file_name), "w") as f:
                     f.write(file)
                     f.close()
-                with open(os.path.join(new_plant_path, "info.json"), "w") as f:
+                with open(os.path.join(new_plant_path_controller, "info.json"), "w") as f:
                     self.info["Plant_ID"] = f"plant_{plant_key}"
                     self.info["User_ID"] = f"user_{user_key}"
                     json.dumps(self.info,indent =4 )
