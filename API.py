@@ -14,10 +14,13 @@ class CatalogManager:
     def __init__(self):
         PATH = os.path.dirname(os.path.abspath(__file__))
         self.Catalog_path= os.path.join(PATH, "catalog.json")
-    
+    exposed = True
     def GET(self,*uri,**params):
+        logging.info("Get Request")
         if len(uri)!= 0 and uri[0] == 'Catalog':
+            logging.info("Get Catalog  request open ")
             with open(self.Catalog_path) as json_file:
+                logging.info("Catalog file opened")
                 catalog = json.load(json_file)
                 json_file.close()
 
@@ -32,10 +35,10 @@ class CatalogManager:
 
             elif uri[1] == "topics":
                 # get the corresponding topic from  Catalog.json of corresponding program and type and user 
-                program = params["program"]
                 Val_type = params['type']
-                user_key = params["user"]
-                plant_key = params["plant"]
+                program = params['program']
+                user_key = params['user']
+                plant_key = params['plant']
 
                 
                 if user_key in catalog['Users']:
@@ -58,8 +61,8 @@ class CatalogManager:
                 user = dict()               
                 user_key = params["user"]
                 if user_key in catalog["Users"]:
-                        user["name"] = catalog["Users"][user_key]["Name"]
-                        user["ID"] = catalog["Users"][user_key]["ID"]
+                        user["name"] = catalog["Users"][user_key]["User_Name"]
+                        user["ID"] = user_key
                         logging.info("User found for %s" %(user_key))
                         return json.dumps(user)   
                
@@ -153,18 +156,22 @@ class CatalogManager:
                 
         else : 
             return cherrypy.HTTPError(400, "Bad Post Request")
-    
+    @cherrypy.tools.json_in()
     def PUT(self,*uri,**param):
-        body = cherrypy.request.body.read()
-        Input = json.load(body)
+        body = cherrypy.request.json
+
+        logging.info(body)
+        #Input = json.load(body)
+
+        logging.info(body["User_Name"])
         Sca = Scaler()
         if len(uri)!= 0 and uri[0] == "add_user": 
-            Sca.add_user(Input)
+            Sca.add_user(body)
             return "User added"
         if len(uri)!= 0 and uri[0] == "add_plant": 
             user_ID=param["user"]
             Sca.add_folder()
-            Sca.add_plant(Input,user_ID)
+            Sca.add_plant(body,user_ID)
             return "Plant added"
     
     
@@ -190,7 +197,7 @@ class CatalogManager:
 
                 
 if __name__=="__main__":
-
+    logging.basicConfig(level=logging.DEBUG,format=str('%(asctime)s - %(levelname)s - %(message)s'))
     conf={
         '/':{
                 'request.dispatch':cherrypy.dispatch.MethodDispatcher()

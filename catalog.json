@@ -1,5 +1,5 @@
 { 
-    "Project_Owner":"Group??",
+     "Project_Owner":"Group??",
     "Projec_tName":"SmartPlant",
     "LastUpdate":"",
     "broker":"broker.hivemq.com",
@@ -9,11 +9,11 @@
         "1": 
         {
             "User_Name":"sarah",
-            "ThingSpeak Field" : {"url": "https://api.thingspeak.com/update.json","api key": "MV7B8DSLUNAL5ZMX" , "channel_id": "2090142" },
             "ChatBot": "6275431098:AAHCKqZl9UYPvmcwJ2c2atlJpkP-Wgy3q5c",
             "Plants":{  "1": 
                             {
                             "Crop":"Tomato",
+                            "ThingSpeak Field" : {"url": "https://api.thingspeak.com/update.json","api key": "MV7B8DSLUNAL5ZMX" , "channel_id": "2090142" },
                             "Password":"",
                             "ChatID":"",
                             "irrigration":{"time":"","duration":"", "Number of irrigation This day": 0 },

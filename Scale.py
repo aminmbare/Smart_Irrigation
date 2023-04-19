@@ -29,17 +29,17 @@ class Scaler(object):
                 self.irrigation_controller = f.read()
                 f.close()
             #open heathing controller of user 1
-            with open (os.path.join(path, "Controllers", "user_1","plant_1", "Heating_Controller.py"), "r") as f:
+            with open (os.path.join(path, "Controllers", "user_1","plant_1", "Health_Controller.py"), "r") as f:
                 self.heath_controller = f.read()
                 f.close()
             with open (os.path.join(path, "Connectors", "user_1", "plant_1", "info.json"), "r") as f:
-                self.info = json.load()
+                self.info = json.load(f)
                 f.close()
             # Connectors path
             self.connector_path = os.path.join(path, "Connectors")
             # Controllers path
             self.controller_path = os.path.join(path, "Controllers")
-            self.Connector_list = [(self.device_connector_humidity,"Device_Connector_humidity.py"), (self.device_connector_moisturemoisture,"Device_Connector_moisture.py"), (self.device_connector_temperature,"Device_Connector_temperature.py")]
+            self.Connector_list = [(self.device_connector_humidity,"Device_Connector_humidity.py"), (self.device_connector_moisture,"Device_Connector_moisture.py"), (self.device_connector_temperature,"Device_Connector_temperature.py")]
             self.Controller_list = [(self.irrigation_controller,"Irrigation_Controller.py"), (self.heath_controller,"Heating_Controller.py")]
 
     def add_user(self,dictionary : dict)-> None: 
@@ -47,7 +47,7 @@ class Scaler(object):
         with open("catalog.json", "r") as f:
             catalog = json.load(f)
             f.close()
-        ID = dictionary["User_ID"]
+        ID = len(catalog["Users"])+1
         catalog["Users"][ID] =dictionary
         # create a new folder for the user 
         new_user_path_connector = os.path.join(self.connector_path,f"user_{ID}")
@@ -57,14 +57,16 @@ class Scaler(object):
         # update catalog 
         with open("catalog.json", "w+") as f: 
             json.dump(catalog, f)
-            f.close()      
-    def add_folder(self, user_key : int):
+            f.close()    
+          
+    def add_folder(self, user_key : int)-> bool:
         with open("catalog.json", "r") as f:
             catalog = json.load(f)
             f.close()
-     
-        number_of_plants = len(catalog["Users"][user_key]["Plants"])
-        
+        if user_key in catalog["Users"]:
+            number_of_plants = len(catalog["Users"][user_key]["Plants"])
+        else : 
+            return False
         new_plant_path_connector = os.path.join(self.connector_path,f"user_{user_key}", f"plant_{number_of_plants+1}")
         os.mkdir(new_plant_path_connector)
         new_plant_path_controller = os.path.join(self.controller_path,f"user_{user_key}", f"plant_{number_of_plants+1}")
@@ -109,6 +111,10 @@ class Scaler(object):
                     self.info["User_ID"] = f"user_{user_key}"
                     json.dumps()
                     f.close()
+        with open("catalog.json", "w+") as f:
+            json.dump(catalog, f)
+            f.close()   
+        return True
     def delete_user(self, user_key : str)-> bool:
         # delete user from catalog
         with open("catalog.json", "r") as f:
@@ -128,7 +134,7 @@ class Scaler(object):
         with open("catalog.json", "w+") as f:
             json.dump(catalog, f)
             f.close()
-    def delete_plant(self, user_key : str, plant_key : str)-> None:
+    def delete_plant(self, user_key : str, plant_key : str)-> bool:
         # delete plant from catalog
         with open("catalog.json", "r") as f:
             catalog = json.load(f)
@@ -150,6 +156,7 @@ class Scaler(object):
         with open("catalog.json", "w+") as f:
             json.dump(catalog, f)
             f.close()
+        return True
         
         
         

@@ -69,4 +69,3 @@ if __name__ == "__main__":
             i -= random.choice([0,1,0.5])
             time.sleep(4)
     
-    
