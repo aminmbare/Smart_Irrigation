@@ -9,12 +9,10 @@
         "1": 
         {
             "User_Name":"sarah",
-            "user_ID":1,
             "ThingSpeak Field" : {"url": "https://api.thingspeak.com/update.json","api key": "MV7B8DSLUNAL5ZMX" , "channel_id": "2090142" },
             "ChatBot": "6275431098:AAHCKqZl9UYPvmcwJ2c2atlJpkP-Wgy3q5c",
             "Plants":{  "1": 
                             {
-                            "Plant ID":1,
                             "Crop":"Tomato",
                             "Password":"",
                             "ChatID":"",
@@ -35,8 +33,8 @@
                             },
 
                             "Devices":{
-                                "Device_1":{
-                                    "Device_ID":1,
+                                "1":{
+
                                     "Device_Name":"DHT1",
                                     "Measure_Type":["temperature"],
                                     "Available_Service":{
@@ -46,8 +44,8 @@
                                         }
                                     }
                                 },
-                                "Device_2":{
-                                    "Device_ID":2,
+                                "2":{
+
                                     "Device_Name":"Moisture sensor",
                                     "Measure_Type":["moisture"],
                                     "Available_Service":{
@@ -57,8 +55,8 @@
                                         }
                                     }
                                 },
-                                "Device_3":{
-                                    "Device_ID":3,
+                                "3":{
+
                                     "Device_Name":"humidity",
                                     "Measure_Type":["humidity"],
                                     "Available_Service":{
@@ -68,8 +66,8 @@
                                         }
                                     }
                                 },    
-                                "Device_4":{
-                                    "Device_4":4,
+                                "4":{
+
                                     "Device_Name":"Pi Camera",
                                     "Measure_type":["Image"],
                                     "Available_Service":{
@@ -79,8 +77,8 @@
                                         }
                                     }
                                 },
-                                "Device_5":{
-                                    "Device_4":4,
+                                "5":{
+
                                     "Device_Name":"Water Pump",
                                     "Measure_type":["irrigation"],
                                     "Available_Service":{
@@ -96,12 +94,12 @@
         },
         "2": {
             "User_Name":"sarah",
-            "user_ID":1,
+
             "ThingSpeak Field" : {"url": "https://api.thingspeak.com/update.json","api key": "MV7B8DSLUNAL5ZMX" , "channel_id": "2090142" },
             "ChatBot": "6275431098:AAHCKqZl9UYPvmcwJ2c2atlJpkP-Wgy3q5c",
             "Plants": {
                         "1":{
-                            "Plant ID":1,
+
                             "Crop":"Tomato",
                             "Password":"",
                             "ChatID":"",
@@ -121,7 +119,7 @@
                             },
                             "Devices":{
                                 "1":{
-                                    "Device_ID":1,
+
                                     "Device_Name":"DHT1",
                                     "Measure_Type":["temperature"],
                                     "Available_Service":{
@@ -132,7 +130,7 @@
                                     }
                                 },
                                 "2":{
-                                    "Device_ID":2,
+
                                     "Device_Name":"Moisture sensor",
                                     "Measure_Type":["moisture"],
                                     "Available_Service":{
@@ -144,7 +142,7 @@
 
                                 },
                                 "3":{
-                                    "Device_ID":3,
+
                                     "Device_Name":"humidity",
                                     "Measure_Type":["humidity"],
                                     "Available_Service":{
@@ -155,7 +153,7 @@
                                     }
                                 },    
                                 "4":{
-                                    "Device_ID":4,
+
                                     "Device_Name":"Pi Camera",
                                     "Measure_type":"Image",
                                     "Available_Service":{

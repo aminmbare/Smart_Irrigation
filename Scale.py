@@ -48,7 +48,7 @@ class Scaler(object):
             catalog = json.load(f)
             f.close()
         ID = dictionary["User_ID"]
-        catalog["Users"].append(dictionary)
+        catalog["Users"][ID] =dictionary
         # create a new folder for the user 
         new_user_path_connector = os.path.join(self.connector_path,f"user_{ID}")
         new_user_path_controller = os.path.join(self.controller_path,f"user_{ID}" )
@@ -58,46 +58,46 @@ class Scaler(object):
         with open("catalog.json", "w+") as f: 
             json.dump(catalog, f)
             f.close()      
-    def add_folder(self, ID : int):
+    def add_folder(self, user_key : int):
         with open("catalog.json", "r") as f:
             catalog = json.load(f)
             f.close()
-        for _user in catalog["Users"]:
-            if _user["User_ID"] == ID:
-                User__Catalog = _user
-                break
-        number_of_plants = len(User__Catalog["Plants"])
         
-        new_plant_path_connector = os.path.join(self.connector_path,f"user_{ID}", f"plant_{number_of_plants+1}")
+           
+        number_of_plants = len(catalog["Users"][user_key]["Plants"])
+        
+        new_plant_path_connector = os.path.join(self.connector_path,f"user_{user_key}", f"plant_{number_of_plants+1}")
         os.mkdir(new_plant_path_connector)
-        new_plant_path_controller = os.path.join(self.controller_path,f"user_{ID}", f"plant_{number_of_plants+1}")
+        new_plant_path_controller = os.path.join(self.controller_path,f"user_{user_key}", f"plant_{number_of_plants+1}")
         os.mkdir(new_plant_path_controller)
     
-    def add_plant(self,ID: int,dictionary : dict)-> None:
+    def add_plant(self,user_key: int,dictionary : dict)-> bool:
         # add plant to catalog
         with open("catalog.json", "r") as f:
             catalog = json.load(f)
             f.close()
-        for _user in catalog["Users"]:
-            if _user["User_ID"] == ID:
-                _user["Plants"].append(dictionary)
-                break
-            
-        plant_id = dictionary["Plant_ID"]
+        number_of_plants = len(catalog["Users"][user_key]["Plants"])
+        if user_key in catalog["Users"]:
+            catalog["Users"][user_key]["Plants"][f"plant_{number_of_plants+1}"] = dictionary
+        else : 
+            return False 
         
-        path = os.path.join(self.connector_path, f"user_{ID}")
+        number_of_plants = len(catalog["Users"][user_key]["Plants"])  
+        plant_key = number_of_plants+1
+        
+        path = os.path.join(self.connector_path, f"user_{user_key}")
         logging.info("Controller path is: %s", path)
     
-        new_plant_path = os.path.join(path, f"plant_{plant_id}")
+        new_plant_path = os.path.join(path, f"plant_{plant_key}")
 
         for file , file_name in self.Connector_list:
-            logging.info(f"File {file_name} is being added to the Connector folder for user {ID} ")
+            logging.info(f"File {file_name} is being added to the Connector folder for user {user_key} ")
             with open(os.path.join(new_plant_path, file_name), "w") as f:
                 f.write(file)
                 f.close()
             with open(os.path.join(new_plant_path, "info.json"), "w") as f:
-                    self.info["Plant_ID"] = f"plant_{plant_id}"
-                    self.info["User_ID"] = f"user_{ID}"
+                    self.info["Plant_ID"] = f"plant_{plant_key}"
+                    self.info["User_ID"] = f"user_{user_key}"
                     json.dumps()
                     f.close()
         for file , file_name in self.Controller_list:
@@ -106,44 +106,46 @@ class Scaler(object):
                     f.write(file)
                     f.close()
                 with open(os.path.join(new_plant_path, "info.json"), "w") as f:
-                    self.info["Plant_ID"] = f"plant_{plant_id}"
-                    self.info["User_ID"] = f"user_{ID}"
+                    self.info["Plant_ID"] = f"plant_{plant_key}"
+                    self.info["User_ID"] = f"user_{user_key}"
                     json.dumps()
                     f.close()
-    def delete_user(self, ID : int)-> None:
+    def delete_user(self, user_key : str)-> bool:
         # delete user from catalog
         with open("catalog.json", "r") as f:
             catalog = json.load(f)
             f.close()
-        for _user in catalog["Users"]:
-            if _user["User_ID"] == ID:
-                catalog["Users"].remove(_user)
-                break
+        if user_key in catalog["Users"]:
+                # remove user from catalog         
+            del catalog["Users"][user_key]
+        else:
+            return False 
         # delete user folder
-        path = os.path.join(self.connector_path, f"user_{ID}")
+        path = os.path.join(self.connector_path, f"user_{user_key}")
         shutil.rmtree(path)
-        path = os.path.join(self.controller_path, f"user_{ID}")
+        path = os.path.join(self.controller_path, f"user_{user_key}")
         shutil.rmtree(path)
         # update catalog
         with open("catalog.json", "w+") as f:
             json.dump(catalog, f)
             f.close()
-    def delete_plant(self, ID : int, plant_id : int)-> None:
+    def delete_plant(self, user_key : str, plant_key : str)-> None:
         # delete plant from catalog
         with open("catalog.json", "r") as f:
             catalog = json.load(f)
             f.close()
-        for _user in catalog["Users"]:
-            if _user["User_ID"] == ID:
-                for _plant in _user["Plants"]:
-                    if _plant["Plant_ID"] == plant_id:
-                        _user["Plants"].remove(_plant)
-                        break
-                break
+        if user_key in catalog["Users"]:
+                if  plant_key in catalog["Users"][user_key]["Plants"]:
+                    # remove plant from catalog
+                    del catalog["Users"][user_key]["Plants"][plant_key]
+                else:
+                    return False 
+        else:
+            return False 
         # delete plant folder
-        path = os.path.join(self.connector_path, f"user_{ID}", f"plant_{plant_id}")
+        path = os.path.join(self.connector_path, f"user_{user_key}", f"plant_{plant_key}")
         shutil.rmtree(path)
-        path = os.path.join(self.controller_path, f"user_{ID}", f"plant_{plant_id}")
+        path = os.path.join(self.controller_path, f"user_{user_key}", f"plant_{plant_key}")
         shutil.rmtree(path)
         # update catalog
         with open("catalog.json", "w+") as f:
