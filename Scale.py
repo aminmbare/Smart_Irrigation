@@ -128,6 +128,28 @@ class Scaler(object):
         with open("catalog.json", "w+") as f:
             json.dump(catalog, f)
             f.close()
+    def delete_plant(self, ID : int, plant_id : int)-> None:
+        # delete plant from catalog
+        with open("catalog.json", "r") as f:
+            catalog = json.load(f)
+            f.close()
+        for _user in catalog["Users"]:
+            if _user["User_ID"] == ID:
+                for _plant in _user["Plants"]:
+                    if _plant["Plant_ID"] == plant_id:
+                        _user["Plants"].remove(_plant)
+                        break
+                break
+        # delete plant folder
+        path = os.path.join(self.connector_path, f"user_{ID}", f"plant_{plant_id}")
+        shutil.rmtree(path)
+        path = os.path.join(self.controller_path, f"user_{ID}", f"plant_{plant_id}")
+        shutil.rmtree(path)
+        # update catalog
+        with open("catalog.json", "w+") as f:
+            json.dump(catalog, f)
+            f.close()
+        
         
         
         
