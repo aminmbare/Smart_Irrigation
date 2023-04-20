@@ -67,7 +67,7 @@ if __name__ == "__main__":
         PlantID = info["Plant_ID"]
         DeviceID = info["Device_ID"]
         f.close()
-    ThinkSpeak = requests.get(f"http://127.0.0.1:8080/ThingSpeak?user={UserID[-1]}&plant={PlantID[-1]} ").json()
+    ThinkSpeak = requests.get(f"http://127.0.0.1:8080/ThingSpeak?user={UserID}&plant={PlantID} ").json()
     moisture = device_connector_moisture( UserID, PlantID, DeviceID)
     moisture.start()
     logging.info(f" Moisture Connector for {UserID}, {PlantID} , {DeviceID} is activated  ")
