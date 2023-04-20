@@ -14,15 +14,14 @@ import json
 class Controller_Irrigation(Controller):
     def __init__(self,UserID: str, PlantID: str)-> None:
         super().__init__()
-        self.__ClientID = "Controller_irrigation"
-        self.__UserID = UserID 
-        self.__PlantID = PlantID 
+        self._UserID = UserID 
+        self._PlantID = PlantID 
 
-        self.ClienID = "Controller_irrigation"+"_"+self.__UserID +"_"+ self.__PlantID 
-        self.__temperature = 0
-        self.__moisture = 0
-        self.__temperature_state = False 
-        self.__moisture_state = False 
+        self._ClienID = "Controller_irrigation"+"_"+self._UserID +"_"+ self._PlantID 
+        self._temperature = 0
+        self._moisture = 0
+        self._temperature_state = False 
+        self._moisture_state = False 
         self.client = MyMQTT(self.ClientID, self.broker, self.port,None)
         self.ValueType = "Irrigation" 
 
@@ -82,11 +81,10 @@ class Controller_Irrigation(Controller):
 if __name__ == "__main__":
     with open("info.json", "r") as f: 
         info = json.load(f)
-        UserID = info["User_ID"]
-        PlantID = info["Plant_ID"]
+        UserID = "user"+info["User_ID"]
+        PlantID = "plant"+info["Plant_ID"]
         f.close()
-    UserID = "user"+str(UserID)      
-    PlantID = "plant"+str(PlantID)
+    
     
     controller  = Controller_Irrigation(UserID,PlantID)
     controller.start()
