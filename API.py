@@ -56,14 +56,11 @@ class CatalogManager:
                     return cherrypy.HTTPError(400, f"User not found for {user_key} and {plant_key}")                     
 
 
-            elif uri[1] =="user_info":
-                user = dict()               
+            elif uri[1] =="user_info":   
                 user_key = params["user"]
                 if user_key in catalog["Users"]:
-                        user["name"] = catalog["Users"][user_key]["User_Name"]
-                        user["ID"] = user_key
                         logging.info("User found for %s" %(user_key))
-                        return json.dumps(user)   
+                        return json.dumps({"User":catalog["Users"][user_key]})  
                
                 return cherrypy.HTTPError(400, f"User not found")
                 
@@ -97,17 +94,16 @@ class CatalogManager:
                         cherrypy.HTTPError(400, f"Plant not found for {user_key} and {plant_key}")
                 else : 
                     cherrypy.HTTPError(400, f"User not found for {user_key} and {plant_key}")
-               
+            elif uri[1] == "Chatbot_token": 
+              logging.info("Chatbot token request")
+              return json.dumps({"token":catalog['Telegram']['token']})     
                       
             elif uri[1] == "ChatBot": 
                 user_key = params["user"]
-                plant_key = params["plant"]
                 if user_key in catalog['Users']:
-                    if plant_key in catalog['Users'][user_key]["Plants"]:
-                        logging.info("Health status found for %s and %s" %(user_key, plant_key))
-                        return json.dumps({"Irrigation status":catalog['Users'][user_key]["Plants"][plant_key]["Health Status"]})    
-                    else : 
-                        cherrypy.HTTPError(400, f"Plant not found for {user_key} and {plant_key}")
+
+                        logging.info("Chatbot Data found for  user%s" %(user_key))
+                        return json.dumps({"Password":catalog['Users'][user_key]["Plants"]["ChatBot"]["Password"]})    
                 else : 
                     cherrypy.HTTPError(400, f"User not found for {user_key} and {plant_key}")
             else : 

@@ -16,7 +16,6 @@ dependencies:
     - pyyaml
     - boto3
     - ipykernel
-    - mosquitto
     - cherrypy
     - pip:
         - tensorflow-macos == 2.9.0
