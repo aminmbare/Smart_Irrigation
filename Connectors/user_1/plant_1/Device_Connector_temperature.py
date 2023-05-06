@@ -2,14 +2,14 @@ from MyMQTT import *
 import datetime 
 import requests 
 import time 
-import Abstract_Device_Connector
+from  Abstract_Device_Connector import device_connector
 import logging
 
 
-class device_connector_temp(Abstract_Device_Connector): 
+class device_connector_temp(device_connector): 
 
     def __init__(self , UserID:int, PlantID: int , DeviceID: int,**TS )-> None: 
-        super().__init__()
+        super(device_connector_temp,self).__init__()
         self.__root = "IOT_PROJECT"
         self._UserID = "user"+UserID 
         self._PlantID = "plant"+PlantID 
@@ -25,12 +25,13 @@ class device_connector_temp(Abstract_Device_Connector):
         self.client = MyMQTT(self.ClientID, self.broker, self.port, None)
 
         self._TS = TS
-
-    def start(self)-> None : 
+        self._count = 0
+    def start(self): 
         self.client.start()
 
-    def stop(self)-> None: 
+    def stop(self): 
         self.client.stop()
+ 
 
     def publish(self, value)-> None: 
         logging.info("Moisture value is: " + str(value))
@@ -45,7 +46,7 @@ class device_connector_temp(Abstract_Device_Connector):
             "entry_id": self._count,
             "field1":  value,      
         })
-        self.count +=1
+        self._count +=1
         headers = {'Content-type': 'application/json', 'Accept': 'raw'}
         requests.post(url=self._TS["url"], data=data_upload, headers=headers)
         logging.info("Temperature value has been upload to ThingSpeak: " + str(value))
@@ -59,8 +60,8 @@ if __name__ == "__main__":
         DeviceID = info["Device_ID"]
         f.close()
     # open ThingSpeak.json and get ThingSpeak info
-    ThinkSpeak = requests.get(f"http://127.0.0.1:8080/ThingSpeak?user={UserID}&plant={PlantID}").json()
-    temperature = device_connector_temp( UserID, PlantID, DeviceID,ThinkSpeak)
+    ThinkSpeak = json.loads(requests.get(f"http://127.0.0.1:8080/ThingSpeak?user={UserID}&plant={PlantID}"))
+    temperature = device_connector_temp(UserID, PlantID, DeviceID,ThinkSpeak)
     temperature.start()
     
     logging.info(f" Temperature Connector for user : {UserID}, plant : {PlantID} , device : {DeviceID} is activated  ")

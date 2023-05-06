@@ -1,8 +1,7 @@
 import sys
 import os
-sys.path.append(os.path.abspath(os.path.join(os.getcwd(),"Connectors")))
+
 from Abstract_Device_Connector import device_connector
-sys.path.append(os.path.abspath(os.path.join(os.getcwd())))
 from MyMQTT import * 
 import datetime  
 import logging
@@ -15,7 +14,7 @@ import requests
 class device_connector_humidity(device_connector): 
 
     def __init__(self , UserID : int, PlantID: int , DeviceID: int,**TS)-> None: 
-        super().__init__()
+        super(device_connector_humidity,self).__init__()
         self._root = "IOT_PROJECT" 
         self._UserID = "user"+UserID 
         self._PlantID = "plant"+PlantID 
@@ -69,7 +68,8 @@ if __name__ == "__main__":
         DeviceID = info["Device_ID"]
         f.close()
     
-    ThinkSpeak = requests.get(f"http://127.0.0.1:8080/ThingSpeak?user={UserID}&plant={PlantID} ").json()
+    ThinkSpeak = json.loads(requests.get(f"http://127.0.0.1:8080/ThingSpeak?user={UserID}&plant={PlantID} "))
+    
     humidity = device_connector_humidity(UserID, PlantID, DeviceID)
     humidity.start()
     logging.info(f" Humidity Connector for {UserID}, {PlantID} , {DeviceID} is activated  ")

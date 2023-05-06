@@ -3,14 +3,14 @@ import datetime
 import requests 
 import time 
 import random 
-import Abstract_Device_Connector
+from  Abstract_Device_Connector import device_connector
 import logging
 import os
 
-class device_connector_moisture(Abstract_Device_Connector): 
+class device_connector_moisture(device_connector): 
 
     def __init__(self ,UserID: str,PlantID: str, DeviceID: str,**TS)-> None: 
-        super().__init__()
+        super(device_connector_moisture,self).__init__()
         self._root = "IOT_PROJECT" 
         self._UserID = "user"+UserID 
         self._PlantID = "plant"+PlantID 
@@ -28,7 +28,7 @@ class device_connector_moisture(Abstract_Device_Connector):
         self.client = MyMQTT(self.ClientID, self.broker, self.port, None)
         
         self._TS = TS
-        self.count = 0
+        self._count = 0
         
 
 
@@ -67,7 +67,7 @@ if __name__ == "__main__":
         PlantID = info["Plant_ID"]
         DeviceID = info["Device_ID"]
         f.close()
-    ThinkSpeak = requests.get(f"http://127.0.0.1:8080/ThingSpeak?user={UserID}&plant={PlantID} ").json()
+    ThinkSpeak = json.loads(requests.get(f"http://127.0.0.1:8080/ThingSpeak?user={UserID}&plant={PlantID} "))
     moisture = device_connector_moisture( UserID, PlantID, DeviceID)
     moisture.start()
     logging.info(f" Moisture Connector for {UserID}, {PlantID} , {DeviceID} is activated  ")
