@@ -13,16 +13,15 @@ import requests
 
 class device_connector_humidity(device_connector): 
 
-    def __init__(self , UserID : int, PlantID: int , DeviceID: int,TS : dict)-> None: 
+    def __init__(self , UserID : int, PlantID: int ,TS : dict)-> None: 
         super(device_connector_humidity,self).__init__()
         self._root = "IOT_PROJECT" 
         self._UserID = "user"+UserID 
         self._PlantID = "plant"+PlantID 
-        self._DeviceID = "device"+DeviceID
+        self._DeviceID = "device3"
         self._val_type = "humidity"
         self._ClientID = "Humidity_Connector_"+self._UserID+"_"+self._PlantID+"_"+self._DeviceID
-        self._topic = self._root +"/"+ self._UserID +"/" + self._PlantID+"/"+self._val_type\
-                     +"/" + self._DeviceID
+        self._topic = (requests.get(f'http://127.0.0.1:8080/Catalog/topics?user={self._UserID[-1]}&plant={self._PlantID[-1]}&program=Sensor&type=humidity').json())["topic"]
         
         self._message = {"Topic": self._topic , "ClientID":self._ClientID,
                             "INFO":{"Type":self._val_type , "Value":None , "Time":'',
@@ -50,14 +49,14 @@ class device_connector_humidity(device_connector):
             "channel_id": self._TS["channel_id"],
             "created_at": datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
             "entry_id": self._count,
-            "field3":  value,      
+            "field2":  value,      
         })
-        self.count +=1
+        self._count +=1
         headers = {'Content-type': 'application/json', 'Accept': 'raw'}
         requests.post(url=self._TS["url"], data=data_upload, headers=headers)
 
 if __name__ == "__main__": 
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(_message)s')
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
     # open info.json and get User ID and Plant ID
     CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
     Info_path = os.path.join(CURRENT_PATH, "info.json")
@@ -65,21 +64,20 @@ if __name__ == "__main__":
         info = json.load(f)
         UserID = info["User_ID"]
         PlantID = info["Plant_ID"]
-        DeviceID = info["Device_ID"]
         f.close()
-    logging.info(f" User ID is {UserID} , Plant ID is {PlantID} , Device ID is {DeviceID} ")
+    logging.info(f" User ID is {UserID} , Plant ID is {PlantID}  ")
     ThinkSpeak = requests.get(f"http://127.0.0.1:8080/Catalog/ThingSpeak?user={UserID}&plant={PlantID}").json()
-
-    humidity = device_connector_humidity(UserID, PlantID, DeviceID,ThinkSpeak)
+    
+    humidity = device_connector_humidity(UserID, PlantID,ThinkSpeak)
     humidity.start()
-    logging.info(f" Humidity Connector for {UserID}, {PlantID} , {DeviceID} is activated  ")
-
+    logging.info(f" Humidity Connector for {UserID}, {PlantID}  is activated  ")
+    
     while True : 
         i = 80
         while i<= 95 : 
             temp = i
             humidity.publish(temp)
-            i = random.choice([0,1,0.5])
+            i += random.choice([0,1,0.5])
             time.sleep(4)
         while i >= 50: 
             temp = i 

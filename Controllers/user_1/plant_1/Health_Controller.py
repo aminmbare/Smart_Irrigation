@@ -11,11 +11,11 @@ from PIL import Image
 
 class Controller_health(Controller): 
     def __init__(self,UserID : str , PlantID : str )->None: 
-        super(Controller_health).__init__()
+        super(Controller_health,self).__init__()
         
         self.__UserID = UserID
         self.__PlantID = PlantID
-        self._ClientID = "Controller_health"+"_"+self._UserID +"_"+ self._PlantID 
+        self._ClientID = "Controller_health"+"_"+self._UserID +"_"+ self._PlantID
         self._client = MyMQTT(self.__ClientID,self.broker,None)
     def start(self)-> None:
         self._client.start()
@@ -31,10 +31,10 @@ class Controller_health(Controller):
         image = message["INFO"]["Value"]
         time = message["INFO"]["time"]
         health = self.fetch_from_cloud()
-        requests.post('http://127.0.0.1:8080/health',json.dumps(health))  
+        requests.post('http://127.0.0.1:8080/health',json.dumps(health))
         
         
-    
+
     @staticmethod
     def fetch_from_cloud():
         logging.info("Image has been captured by the controller, Ready to send it to the cloud")

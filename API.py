@@ -38,7 +38,7 @@ class CatalogManager:
                 program = params['program']
                 user_key = params['user']
                 plant_key = params['plant']
-
+                
                 
                 if user_key in catalog['Users']:
                         if plant_key in catalog['Users'][user_key]["Plants"]:
