@@ -13,7 +13,7 @@ import json
 
 class Controller_Irrigation(Controller):
     def __init__(self,UserID: str, PlantID: str)-> None:
-        super().__init__()
+        super(Controller_Irrigation).__init__()
         self._UserID = UserID 
         self._PlantID = PlantID 
 
@@ -74,7 +74,7 @@ class Controller_Irrigation(Controller):
     
     def send_actuation(self,value:bool)-> None :
         
-        new_topic = requests.get("http://127.0.0.1:8000/catalog/all_topics?program=controllers&type=irrigation").json()["topic"]
+        new_topic = requests.get(f"http://127.0.0.1:8000/catalog/{self.__UserID}/{self.__PlantID}/all_topics?program=controllers&type=irrigation").json()["topic"]
         self.publish(value,new_topic[0])
         
     

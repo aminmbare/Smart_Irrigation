@@ -10,20 +10,20 @@ import pickle
 from PIL import Image
 
 class Controller_health(Controller): 
-    def __init__(self,)->None: 
-        super().__init__()
+    def __init__(self,UserID : str , PlantID : str )->None: 
+        super(Controller_health).__init__()
         
-        self._ClientID = "Controller_health"
+        self.__UserID = UserID
+        self.__PlantID = PlantID
+        self._ClientID = "Controller_health"+"_"+self._UserID +"_"+ self._PlantID 
         self._client = MyMQTT(self.__ClientID,self.broker,None)
-    
-    
     def start(self)-> None:
         self._client.start()
     def stop(self)-> None : 
         self._client.stop() 
     
     def subscribe(self): 
-        topic = (requests.get('http://127.0.0.1:8080/catalog/all_topics?program=Sensor&type=camera').json())["topic"] 
+        topic = (requests.get(f'http://127.0.0.1:8080/catalog/{self.__UserID}/{self.__PlantID}/all_topics?program=Sensor&type=camera').json())["topic"] 
         self.client.MySubscribe(topic)
         
     def notify(self, topic, msg)-> None : 
@@ -52,6 +52,20 @@ class Controller_health(Controller):
         health_status = resp.json()
         logging.info(f"leaf disease detection Worked Succesfully, the response was {health_status}")
         return health_status
+    
+if __name__ == "__main__":
+    with open("info.json", "r") as f: 
+        info = json.load(f)
+        UserID = "user"+info["User_ID"]
+        PlantID = "plant"+info["Plant_ID"]
+        f.close()
+    
+    
+    controller  = Controller_health(UserID,PlantID)
+    controller.start()
+    controller.subscribe()
+    while True  : 
+        time.sleep(3)
         
     
         
