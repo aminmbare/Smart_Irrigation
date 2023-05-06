@@ -13,7 +13,7 @@ import requests
 
 class device_connector_humidity(device_connector): 
 
-    def __init__(self , UserID : int, PlantID: int , DeviceID: int,**TS)-> None: 
+    def __init__(self , UserID : int, PlantID: int , DeviceID: int,TS : dict)-> None: 
         super(device_connector_humidity,self).__init__()
         self._root = "IOT_PROJECT" 
         self._UserID = "user"+UserID 
@@ -21,16 +21,16 @@ class device_connector_humidity(device_connector):
         self._DeviceID = "device"+DeviceID
         self._val_type = "humidity"
         self._ClientID = "Humidity_Connector_"+self._UserID+"_"+self._PlantID+"_"+self._DeviceID
-        self._topic = self._root +"/"+ self._UserID +"/" + self._PlantID+"/"+self.val_type\
+        self._topic = self._root +"/"+ self._UserID +"/" + self._PlantID+"/"+self._val_type\
                      +"/" + self._DeviceID
         
-        self._message = {"Topic": self.__topic , "ClientID":self._ClientID,
-                            "INFO":{"Type":self.val_type , "Value":None , "Time":'',
+        self._message = {"Topic": self._topic , "ClientID":self._ClientID,
+                            "INFO":{"Type":self._val_type , "Value":None , "Time":'',
                             "Unit":'%'}}
         
         self._TS = TS
         self._count = 0
-        self.client = MyMQTT(self.ClientID, self.broker, self.port, None)
+        self.client = MyMQTT(self._ClientID, self.broker, self.port, None)
         
 
     def start(self)-> None: 
@@ -46,7 +46,7 @@ class device_connector_humidity(device_connector):
         self.client.myPublish(self._topic, self._message)
         ## Upload to ThingSpeak
         data_upload = json.dumps({
-            "api_key": self._TS["api_key"],
+            "api_key": self._TS["api key"],
             "channel_id": self._TS["channel_id"],
             "created_at": datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
             "entry_id": self._count,
@@ -67,10 +67,10 @@ if __name__ == "__main__":
         PlantID = info["Plant_ID"]
         DeviceID = info["Device_ID"]
         f.close()
-    
-    ThinkSpeak = json.loads(requests.get(f"http://127.0.0.1:8080/ThingSpeak?user={UserID}&plant={PlantID} "))
-    
-    humidity = device_connector_humidity(UserID, PlantID, DeviceID)
+    logging.info(f" User ID is {UserID} , Plant ID is {PlantID} , Device ID is {DeviceID} ")
+    ThinkSpeak = requests.get(f"http://127.0.0.1:8080/Catalog/ThingSpeak?user={UserID}&plant={PlantID}").json()
+
+    humidity = device_connector_humidity(UserID, PlantID, DeviceID,ThinkSpeak)
     humidity.start()
     logging.info(f" Humidity Connector for {UserID}, {PlantID} , {DeviceID} is activated  ")
 

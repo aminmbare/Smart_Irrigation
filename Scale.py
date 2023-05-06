@@ -12,7 +12,10 @@ class Scaler(object):
     def __init__(self)-> None:
             path = os.path.dirname(os.path.abspath(__file__))
             #open device_connector_temp of user 1
-            
+            # open MyMQTT of user 1
+            with open(os.path.join(path,"MyMQTT.py"), "r") as f:
+                self.MyMQTT = f.read()
+                f.close()
             with open (os.path.join(path, "Connectors", "user_1", "plant_1", "Device_Connector_temperature.py"), "r") as f:
                 self.device_connector_temperature = f.read()
                 f.close()
@@ -35,12 +38,20 @@ class Scaler(object):
             with open (os.path.join(path, "Connectors", "user_1", "plant_1", "info.json"), "r") as f:
                 self.info = json.load(f)
                 f.close()
+            # open abstract class of device connector
+            with open(os.path.join("Connectors", "user_1", "plant_1","Abstract_Device_Connector.py"), "r") as f:
+                self.abstract_device_connector = f.read()
+                f.close()
+            # open abstract class of device controller
+            with open (os.path.join(path, "Controllers", "user_1","plant_1", "Controller.py"), "r") as f:
+                self.abstract_device_controller = f.read()
+                f.close()
             # Connectors path
             self.connector_path = os.path.join(path, "Connectors")
             # Controllers path
             self.controller_path = os.path.join(path, "Controllers")
-            self.Connector_list = [(self.device_connector_humidity,"Device_Connector_humidity.py"), (self.device_connector_moisture,"Device_Connector_moisture.py"), (self.device_connector_temperature,"Device_Connector_temperature.py")]
-            self.Controller_list = [(self.irrigation_controller,"Irrigation_Controller.py"), (self.heath_controller,"Heating_Controller.py")]
+            self.Connector_list = [(self.device_connector_humidity,"Device_Connector_humidity.py"), (self.device_connector_moisture,"Device_Connector_moisture.py"), (self.device_connector_temperature,"Device_Connector_temperature.py"),(self.abstract_device_connector,"Abstract_Device_Connector.py"),(self.MyMQTT,"MyMQTT.py")]
+            self.Controller_list = [(self.irrigation_controller,"Irrigation_Controller.py"), (self.heath_controller,"Heating_Controller.py"),(self.MyMQTT,"MyMQTT.py"),(self.abstract_device_controller,"Controller.py")]
 
     def add_user(self,dictionary : dict)-> None: 
         # add user to catalog 

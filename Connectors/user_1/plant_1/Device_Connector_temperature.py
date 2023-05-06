@@ -8,21 +8,23 @@ import logging
 
 class device_connector_temp(device_connector): 
 
-    def __init__(self , UserID:int, PlantID: int , DeviceID: int,**TS )-> None: 
+    def __init__(self , UserID:int, PlantID: int , DeviceID: int,TS : dict )-> None: 
         super(device_connector_temp,self).__init__()
-        self.__root = "IOT_PROJECT"
+        self._root = "IOT_PROJECT"
         self._UserID = "user"+UserID 
         self._PlantID = "plant"+PlantID 
         self._DeviceID = "device"+DeviceID 
+        self._val_type = "temperature"
         self._ClientID = "Temperature_Connector"+"_"+self._UserID+"_"+self._PlantID+"_"+self._DeviceID
-        self._topic = self.__root +"/"+ self._UserID +"/" + self._PlantID+"/"+self.val_type\
+        self._topic = self._root +"/"+ self._UserID +"/" + self._PlantID+"/"+self._val_type\
                      +"/" + self._DeviceID
+        logging.info(self._t)
         self._message = {"Topic": self.topic , "ClientID":self._ClientID,
-                            "INFO":{"Type":self.val_type , "Value":None , "Time":'',
+                            "INFO":{"Type":self._val_type , "Value":None , "Time":'',
                             "Unit":'Celsius'}}
 
 
-        self.client = MyMQTT(self.ClientID, self.broker, self.port, None)
+        self.client = MyMQTT(self._ClientID, self.broker, self.port, None)
 
         self._TS = TS
         self._count = 0
@@ -35,12 +37,12 @@ class device_connector_temp(device_connector):
 
     def publish(self, value)-> None: 
         logging.info("Moisture value is: " + str(value))
-        self.message["INFO"]["Time"] = str('{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now()))
-        self.message["INFO"]["Value"] = value 
-        self.client.myPublish(self.topic, self.message)
+        self._message["INFO"]["Time"] = str('{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now()))
+        self._message["INFO"]["Value"] = value 
+        self.client.myPublish(self.topic, self._message)
         # Upload to ThingSpeak
         data_upload = json.dumps({
-            "api_key": self._TS["api_key"],
+            "api_key": self._TS["api key"],
             "channel_id": self._TS["channel_id"],
             "created_at": datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"),
             "entry_id": self._count,
@@ -60,7 +62,7 @@ if __name__ == "__main__":
         DeviceID = info["Device_ID"]
         f.close()
     # open ThingSpeak.json and get ThingSpeak info
-    ThinkSpeak = json.loads(requests.get(f"http://127.0.0.1:8080/ThingSpeak?user={UserID}&plant={PlantID}"))
+    ThinkSpeak = requests.get(f"http://127.0.0.1:8080/Catalog/ThingSpeak?user={UserID}&plant={PlantID}").json()
     temperature = device_connector_temp(UserID, PlantID, DeviceID,ThinkSpeak)
     temperature.start()
     

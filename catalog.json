@@ -14,8 +14,8 @@
                     "Crop": "Tomato",
                     "ThingSpeak Field": {
                         "url": "https://api.thingspeak.com/update.json",
-                        "api key": "MV7B8DSLUNAL5ZMX",
-                        "channel_id": "2090142"
+                        "api key": "D74Q4NP0B2OHUOCP",
+                        "channel_id": "2136051"
                     },
                     "Password": "",
                     "ChatID": "",

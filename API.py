@@ -64,15 +64,16 @@ class CatalogManager:
                
                 return cherrypy.HTTPError(400, f"User not found")
                 
-            elif uri[1] == "ThinkSpeak": 
+            elif uri[1] == "ThingSpeak": 
+                logging.debug("ThingSpeak request")
                 user_key = params["user"]
                 plant_key = params["plant"]
-                details = {}
                 if user_key in catalog['Users']:
                     if plant_key in catalog['Users'][user_key]["Plants"]:
-                        details['channel'] = catalog['Users'][user_key]["Plants"][plant_key]['ThinkSpeak']['channel']
-                return json.dumps(details)
-           
+                        
+                        return json.dumps(catalog['Users'][user_key]["Plants"][plant_key]['ThingSpeak Field'])
+                else : 
+                    return cherrypy.HTTPError(400, f"User not found for {user_key} and {plant_key}")
             elif uri[1] == "Irrigation_Status":
                 user_key = params["user"]
                 plant_key = params["plant"]
