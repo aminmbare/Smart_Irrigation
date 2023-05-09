@@ -3,7 +3,7 @@
 import telepot 
 from  telepot.loop import MessageLoop
 from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
-
+import hashlib
 import requests
 import datetime
 import time
@@ -16,12 +16,13 @@ class SwitchBot:
         self.tokenBot = token
         self.bot = telepot.Bot(self.tokenBot)
         mqtt_details = (requests.get('http://127.0.0.1:8080/catalog/mqtt_details')).json()
-
+        
         self.__ClientID = "telegramBot"
         self.client = MyMQTT(self.__ClientID,mqtt_details["broker"],mqtt_details["port"],None)
         self.client.start()
         self._ValueType = "irrigation"
         self._unit = "boolean"
+        self.verify = False
         MessageLoop(self.bot, {'Menu': self.available_service,'chat': self.on_chat_message, 'callback_query': self.on_callback_query}).run_as_thread()
     
     def publish(self,value,topic)-> None : 
@@ -31,14 +32,18 @@ class SwitchBot:
 
         self.client.MyPublish(topic, message)    
     
-    def authentication(self,message:str,chat_ID)-> None : 
+    def authentication(self,message:str,chat_ID:str, msg_id)-> None : 
         usernumber = message.split(" ")[1]
         password = message.split(" ")[2]
-        
-        _pass=requests.get(f'http://127.0.0.1:8080/catalog/ChatBot?usernumber={usernumber}').jsom()
-        if password == _pass["Password"]:
+        hash_object = hashlib.sha256(password.encode())
+        hash_password = hash_object.hexdigest()
+        _pass=requests.get(f'http://127.0.0.1:8080/catalog/ChatBot?usernumber={usernumber}').jso()
+        logging.info("password is %s",_pass["Password"])
+        if hash_password == _pass["Password"]:
                 self.verify = True
-                self.bot.sendMessage(chat_ID, text="You are now logged in as Please select one of the following services:")
+                logging.info("User %s is now logged in",usernumber)
+                self.bot.deleteMessage((chat_ID,msg_id))
+                self.bot.sendMessage(chat_ID, text="You are now logged in , Please select one of the following services:")
                 self.bot.sendMessage(chat_ID, text="""- /irrigation_switch : Irrigate your plant \n
                              - /health_status : Check the health status of your plant \n
                              - /irrigation_status : Check the irrigation status of your plant \n    
@@ -57,8 +62,8 @@ class SwitchBot:
             self.bot.sendMessage(chat_ID, text="Welcome to the Smart Garden Bot")
             self.bot.sendMessage(chat_ID,text = "Please insert your user number and password with the following format: \n /login username password")
         
-        if message.startswith("/login") and self.verify: 
-            self.authentication(message)
+        if message.startswith("/login") and not self.verify: 
+            self.authentication(message,chat_ID,msg["message_id"])
             self.bot.sendMessage(chat_ID, text="""- /irrigation_switch/plant_ID : Irrigate your plant \n
                                  - /health_status/plant_ID : Check the health status of your plant \n
                                  - /irrigation_status/plant_ID : Check the irrigation status of your plant \n        
@@ -97,7 +102,8 @@ class SwitchBot:
         
         
 if __name__ == "__main__":
-    token = (requests.get('http://127.0.0.1:8080/catalog/ChatBot_token').json())["ChatBot"]
+    logging.basicConfig(level=logging.INFO)
+    token = (requests.get('http://127.0.0.1:8080/catalog/ChatBot_token').json())["token"]
     sb=SwitchBot(token)
     while True:
         time.sleep(3)
