@@ -22,6 +22,8 @@ class SwitchBot:
         self._ValueType = "irrigation"
         self._unit = "boolean"
         self.verify = False
+        self.plant  =None
+        self.user = None
         MessageLoop(self.bot, {'chat': self.on_chat_message, 'callback_query': self.on_callback_query}).run_as_thread()
         
     def publish(self,value,topic)-> None : 
@@ -35,15 +37,16 @@ class SwitchBot:
         password = message.split(" ")[2]
         hash_object = hashlib.sha256(password.encode())
         hash_password = hash_object.hexdigest()
-        _pass=requests.get(f'http://127.0.0.1:8080/Catalog/ChatBot?user={usernumber}').json()
-        logging.info("password is %s",_pass["Password"])
-        self.Catalog = requests.get(f'http:127.0.0.1:8080/Catalog/user_info?user={usernumber}').json()
-        if hash_password == _pass["Password"]:
+        _account=requests.get(f'http://127.0.0.1:8080/Catalog/ChatBot?user={usernumber}').json()
+        logging.info("User %s is trying to log in",usernumber)
+        logging.info("acount %s",_account)
+        if hash_password == _account["Password"]:
                 self.verify = True
                 logging.info("User %s is now logged in",usernumber)
                 self.bot.deleteMessage((chat_ID,msg_id))
                 self.bot.sendMessage(chat_ID, text="You are now logged in , Please select you plant with the following format: \n /plant_id plantnumber")
-        
+                
+                self.Chat_ID = _account["ChatID"]
                 self.user = usernumber
 
         else : 
@@ -56,11 +59,13 @@ class SwitchBot:
         if message == "/start":
             self.bot.sendMessage(chat_ID, text="Welcome to the Smart Garden Bot")
             self.bot.sendMessage(chat_ID,text = "Please insert your user number and password with the following format: \n /login usernumber password")
-        
+ 
         elif message.startswith("/login") and not self.verify: 
             self.authentication(message,chat_ID,msg["message_id"])
-          
-        
+        elif message.startswith("/plant_id") and self.verify:
+            self.plant = message.split(" ")[1]
+        elif self.plant == None :
+            self.bot.sendMessage(chat_ID, text="Please select you plant with the following format: \n /plant_id plantnumber")
         elif message.startswith("/irrigation_switch") and self.verify:
             buttons = [[InlineKeyboardButton(text=f'ON', callback_data=f'on'),
                         InlineKeyboardButton(text=f'OFF', callback_data=f'off')]]
@@ -69,15 +74,18 @@ class SwitchBot:
             self.plant = message[-1]
         
         elif message.startswith("/health_status") and self.verify:
-            health_status =(requests.get(f'http://127.0.0.1:8080/Catalog/Health_Status?user={self.user}&plant={message[-1]}').json())
-            self.bot.sendMessage(chat_ID, text=f"plant number {message[-1]} is {health_status['health_status']}  Last Update was on {health_status['Last_Update']}")
+            health_status =(requests.get(f'http://127.0.0.1:8080/Catalog/Health_Status?user={self.user}&plant={self.plant}').json())
+            print(health_status)
+            self.bot.sendMessage(chat_ID , text=f"plant number {self.plant} is {health_status['health status']}  Last Update was on {health_status['Last Update']}")
         
         elif message.startswith("/irrigation_status"):
-            irrigation_status =(requests.get(f'http://127.0.0.1:8080/Catalog/Irrigation_Status?user={self.user}&plant={message[-1]}').json())
-            self.bot.sendMessage(chat_ID, text=f"Time of Irrigation {irrigation_status['time']} , Duration of Irrigation {irrigation_status['duration']}, Number of Irrigations This day {irrigation_status['Number of irrigation This day']}")
+            irrigation_status =(requests.get(f'http://127.0.0.1:8080/Catalog/Irrigation_Status?user={self.user}&plant={self.plant}').json())
+            self.bot.sendMessage(chat_ID, text=f"plant number {self.plant} has been watered last time at {irrigation_status['time']} , Duration of Irrigation {irrigation_status['duration']}, Number of Irrigations This day {irrigation_status['Number of irrigation This day']}")
         elif message == "/logout" and self.verify:
             self.verify = False
             self.user = None 
+            self.plant = None
+            self.Chat_ID = None
             self.bot.sendMessage(chat_ID, text="You are now logged out")
         else:
             self.bot.sendMessage(chat_ID, text="Command not supported")     

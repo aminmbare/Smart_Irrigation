@@ -73,14 +73,14 @@ if __name__ == "__main__":
     logging.info(f" Moisture Connector for {UserID}, {PlantID} is started  ")
     """  Finish the LAST part """
     while True : 
-        i = 80
-        while i<= 95 : 
+        i = 400
+        while i<= 300 : 
             temp = i
             moisture.publish(temp)
-            i += random.choice([0,1,0.5])
+            i += random.choice([0,1,2])
             time.sleep(4)
-        while i >= 50: 
+        while i >= 20: 
             temp = i 
             moisture.publish(temp)
-            i -= random.choice([0,1,0.5])
+            i -= random.choice([0,1,2])
             time.sleep(4)

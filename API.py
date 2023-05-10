@@ -59,8 +59,9 @@ class CatalogManager:
             elif uri[1] =="user_info":   
                 user_key = params["user"]
                 if user_key in catalog["Users"]:
+
                         logging.info("User found for %s" %(user_key))
-                        return json.dumps({"User":catalog["Users"][user_key]})  
+                        return json.dumps(catalog["Users"][user_key])  
                
                 return cherrypy.HTTPError(400, f"User not found")
                 
@@ -80,7 +81,7 @@ class CatalogManager:
                 if user_key in catalog['Users']:
                     if plant_key in catalog['Users'][user_key]["Plants"]:
                         logging.info("Irrigation status found for %s and %s" %(user_key, plant_key))
-                        return json.dumps({"Irrigation status":catalog['Users'][user_key]["Plants"][plant_key]["Irrigation"]})     
+                        return json.dumps(catalog['Users'][user_key]["Plants"][plant_key]["Irrigation Data"])     
                 return cherrypy.HTTPError(400, f"Error")
           
           
@@ -90,21 +91,21 @@ class CatalogManager:
                 if user_key in catalog['Users']:
                     if plant_key in catalog['Users'][user_key]["Plants"]:
                         logging.info("Health status found for %s and %s" %(user_key, plant_key))
-                        return json.dumps({"Irrigation status":catalog['Users'][user_key]["Plants"][plant_key]["Health Status"]})    
+                        return json.dumps(catalog['Users'][user_key]["Plants"][plant_key]["Health Data"])    
                     else : 
                         cherrypy.HTTPError(400, f"Plant not found for {user_key} and {plant_key}")
                 else : 
                     cherrypy.HTTPError(400, f"User not found for {user_key} and {plant_key}")
-            elif uri[1] == "Chatbot_token": 
+            elif uri[1] == "ChatBot_token": 
               logging.info("Chatbot token request")
-              return json.dumps({"token":catalog['Telegram']['token']})     
+              return json.dumps({"token":catalog['ChatBot_token']})     
                       
             elif uri[1] == "ChatBot": 
                 user_key = params["user"]
                 if user_key in catalog['Users']:
 
                         logging.info("Chatbot Data found for  user%s" %(user_key))
-                        return json.dumps({"Password":catalog['Users'][user_key]["Plants"]["ChatBot"]["Password"]})    
+                        return json.dumps(catalog['Users'][user_key]["ChatBot"])    
                 else : 
                     cherrypy.HTTPError(400, f"User not found for {user_key} and {plant_key}")
             else : 
@@ -127,13 +128,13 @@ class CatalogManager:
                 json_file.close()
                 user_key = param["user"]
                 plant_key =  param["plant"]                
-            last_update =  datetime.strptime(catalog["Users"][user_key]["Plants"][plant_key]["irrigation"]["time"],'%m/%d/%y %H:%M:%S')
+            last_update =  datetime.strptime(catalog["Users"][user_key]["Plants"][plant_key]["Irrigation Data"]["time"],'%m/%d/%y %H:%M:%S')
             new_update = datetime.strptime(Input["time"],'%m/%d/%y %H:%M:%S')
             if last_update.day ==  new_update.day :              
-                catalog["Users"][user_key]["Plants"][plant_key]["irrigation"]["Number of irrigation This day"] += 1
+                catalog["Users"][user_key]["Plants"][plant_key]["Irrigation Data"]["Number of irrigation This day"] += 1
             else : 
-                catalog["Users"][user_key]["Plants"][plant_key]["irrigation"]["Number of irrigation This day"] = 1
-            catalog["Users"][user_key]["Plants"][plant_key]["irrigation"]["duration"] = Input["duration"]  
+                catalog["Users"][user_key]["Plants"][plant_key]["Irrigation Data"]["Number of irrigation This day"] = 1
+            catalog["Users"][user_key]["Plants"][plant_key]["Irrigation Data"]["duration"] = Input["duration"]  
             with open("catalog_test.json", "w") as json_file:
                 json.dump(catalog, json_file, indent=4)
                 json_file.close()

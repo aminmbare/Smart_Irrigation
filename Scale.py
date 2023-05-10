@@ -1,18 +1,22 @@
 import logging 
 import datetime 
+import time
 import json 
 import os 
 import shutil
-  
-
+import telepot
+from  telepot.loop import MessageLoop
+import hashlib
 #  Upon receiving a request to add a user or plant for a user 
 # this class will modifify catalog.json file 
 # and create a new folder for the user or plant contained the device connector and controllers
 class Scaler(object):
-    def __init__(self)-> None:
+    def __init__(self,bot_token: str)-> None:
             path = os.path.dirname(os.path.abspath(__file__))
             #open device_connector_temp of user 1
             # open MyMQTT of user 1
+            self.bot = telepot.Bot(bot_token)
+            MessageLoop(self.bot, {'registration': self.registation}).run_as_thread()
             with open(os.path.join(path,"MyMQTT.py"), "r") as f:
                 self.MyMQTT = f.read()
                 f.close()
@@ -58,18 +62,39 @@ class Scaler(object):
         with open("catalog.json", "r") as f:
             catalog = json.load(f)
             f.close()
-        ID = len(catalog["Users"])+1
-        catalog["Users"][ID] =dictionary
+        self.ID = len(catalog["Users"])+1
+        self.catalog["Users"][self.ID] =dictionary
         # create a new folder for the user 
-        new_user_path_connector = os.path.join(self.connector_path,f"user_{ID}")
-        new_user_path_controller = os.path.join(self.controller_path,f"user_{ID}" )
+        new_user_path_connector = os.path.join(self.connector_path,f"user_{self.ID}")
+        new_user_path_controller = os.path.join(self.controller_path,f"user_{self.ID}" )
         os.mkdir(new_user_path_connector)
         os.mkdir(new_user_path_controller)           
         # update catalog 
-        with open("catalog.json", "w+") as f: 
-            json.dump(catalog, f,indent=4)
+        logging.info("NEXT STEP , TELEGRAM BOT USER REGISTRATION")
+
+        while not self.registration_over : 
+            time.sleep(5)
+        with open("catalog.json", "w+") as f:  
+            json.dump(self.catalog, f,indent=4)
             f.close()    
           
+    def registration(self, msg): 
+        content_type, chat_type, chat_ID = telepot.glance(msg)
+        message = msg['text']
+        if message == "/start":
+            self.bot.sendMessage(chat_ID, text=f"Welcome user {self.ID} to the Smart Garden Bot")
+            self.bot.sendMessage(chat_ID, text="For the registration please send me your account password : /password <your password>")
+        elif message.startswith("/password"):
+            password =message.split(" ")[1]
+            hash_object = hashlib.sha256(password.encode())
+            hash_password = hash_object.hexdigest()
+            self.catalog["Users"][self.ID]["ChatBot"]["Password"] = hash_password
+            self.catalog["Users"][self.ID]["ChatBot"]["Chat_ID"] = chat_ID
+            
+            self.bot.deleteMessage((chat_ID, msg["message_id"]))
+            self.bot.sendMessage(chat_ID, text="You have successfully registered to the Smart Garden Bot")
+            self.registration_over = True
+            
     def add_folder(self, user_key : str)-> bool:
         with open("catalog.json", "r") as f:
             catalog = json.load(f)
@@ -83,8 +108,8 @@ class Scaler(object):
         new_plant_path_controller = os.path.join(self.controller_path,f"user_{user_key}", f"plant_{number_of_plants+1}")
         os.mkdir(new_plant_path_controller)
         return True
-    
     def add_plant(self,user_key: str,dictionary : dict)-> bool:
+        
         # add plant to catalog
         with open("catalog.json", "r") as f:
             catalog = json.load(f)

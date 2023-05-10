@@ -38,7 +38,7 @@ class Controller_Irrigation(controller):
         self.client.start()
     def publish(self,value,topic)-> None : 
         self.message["INFO"]["value"]= value
-        self.client.MyPublish(topic, self.message)
+        self.client.myPublish(topic, self.message)
         
     def subscribe(self): 
         temperature_topic = (requests.get(f'http://127.0.0.1:8080/Catalog/topics?user={self._UserID[-1]}&plant={self._PlantID[-1]}&program=Sensor&type=temperature').json())["topic"]
@@ -67,36 +67,32 @@ class Controller_Irrigation(controller):
         if self._moisture_state and self._temperature_state : 
                 self._moisture_state , self._temperature_state = False , False 
                 if self.irrigation_decision(self._temperature,self._moisture): 
-                    time = self.irrigation_time(self._moisture)
+                    irrigation_time = self.irrigation_time(self._moisture)
                     logging.info(f"Irrigation system is On for {time} s")
                     self.send_actuation(True)
-                    requests.post(f'http://127.0.0.1:8080/irrigation/user={self._UserID}&plant={self._PlantID}',json.dumps({"duration":time,"time":datetime.datetime.now().strftime("%m/%d/%y %H:%M:%S")}))  
+                    requests.post(f'http://127.0.0.1:8080/irrigation/user={self._UserID[-1]}&plant={self._PlantID[-1]}',json.dumps({"duration":irrigation_time,"time":datetime.datetime.now().strftime("%m/%d/%y %H:%M:%S")}))
                     time.sleep(30) 
-                               
-                         
-    
-             
+            
     def irrigation_decision(self,temperature,moisture)-> int: 
         input = np.array([[moisture, temperature]])
         
         result = self.irrigation_decision_model.predict(input)
-        logging.info(f"Decision is {result[0,0]}")
+        logging.info(f"Decision is {result}")
     
         return round(result[0,0])
     
     
-
     def irrigation_time(self,moisture)-> float :
-        result = self.irrigation_time_model.predict(moisture)
+        result = self.irrigation_time_model.predict([[moisture]])
         logging.info(f"Time is {result[0]}")
-        return result
+       
+        return result[0][0]
     
     def send_actuation(self,value:bool)-> None :
         
-        new_topic = requests.get(f"http://127.0.0.1:8000/catalog/{self.__UserID}/{self.__PlantID}/all_topics?program=controllers&type=irrigation").json()["topic"]
+        new_topic = requests.get(f"http://127.0.0.1:8080/Catalog/topics?user={self._UserID[-1]}&plant={self._PlantID[-1]}&program=actuator&type=irrigation").json()["topic"]
         self.publish(value,new_topic[0])
         
-    
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -106,8 +102,8 @@ if __name__ == "__main__":
         PlantID = info["Plant_ID"]
 
         f.close()
-    
-    
+
+
     controller  = Controller_Irrigation(UserID,PlantID)
     controller.start()
     controller.subscribe()

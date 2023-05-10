@@ -5,10 +5,12 @@
     "broker": "broker.hivemq.com",
     "port": 1883,
     "base_Topic": "IOT_PROJECT",
+    "ChatBot_token": "5955948234:AAGBi29Pp40XV2M-VeqxaLoDH2axNJlFUQc",
     "Users": {
         "1": {
             "User_Name": "sarah",
-            "ChatBot": "6275431098:AAHCKqZl9UYPvmcwJ2c2atlJpkP-Wgy3q5c",
+            "ChatBot":{"ChatID": "966712244",
+            "Password": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4"},
             "Plants": {
                 "1": {
                     "Crop": "Tomato",
@@ -18,13 +20,12 @@
                         "channel_id": "2136051"
                     },
                     "Password": "",
-                    "ChatID": "",
-                    "irrigration": {
+                    "Irrigation Data": {
                         "time": "",
                         "duration": "",
                         "Number of irrigation This day": 0
                     },
-                    "health data": {
+                    "Health Data": {
                         "health status": "",
                         "Last Update": ""
                     },
