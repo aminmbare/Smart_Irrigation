@@ -37,6 +37,7 @@ class SwitchBot:
         hash_password = hash_object.hexdigest()
         _pass=requests.get(f'http://127.0.0.1:8080/Catalog/ChatBot?user={usernumber}').json()
         logging.info("password is %s",_pass["Password"])
+        self.Catalog = requests.get(f'http:127.0.0.1:8080/Catalog/user_info?user={usernumber}').json()
         if hash_password == _pass["Password"]:
                 self.verify = True
                 logging.info("User %s is now logged in",usernumber)
@@ -66,7 +67,7 @@ class SwitchBot:
             keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
             self.bot.sendMessage(chat_ID, text='What do you want to do', reply_markup=keyboard)
             self.plant = message[-1]
-            
+        
         elif message.startswith("/health_status") and self.verify:
             health_status =(requests.get(f'http://127.0.0.1:8080/Catalog/Health_Status?user={self.user}&plant={message[-1]}').json())
             self.bot.sendMessage(chat_ID, text=f"plant number {message[-1]} is {health_status['health_status']}  Last Update was on {health_status['Last_Update']}")
