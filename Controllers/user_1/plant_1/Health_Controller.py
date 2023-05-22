@@ -2,12 +2,13 @@ import MyMQTT
 import datetime
 import requests 
 import tensorflow as tf 
-import Controller 
+from Abstract_Device_Controller import Controller
 import time 
 import logging 
 import json
 import pickle
 from PIL import Image
+import os
 
 class Controller_health(Controller): 
     def __init__(self,UserID : str , PlantID : str )->None: 
@@ -54,7 +55,9 @@ class Controller_health(Controller):
         return health_status
     
 if __name__ == "__main__":
-    with open("info.json", "r") as f: 
+    CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
+    Info_path = os.path.join(CURRENT_PATH, "info.json")
+    with open(Info_path, "r") as f: 
         info = json.load(f)
         UserID = "user"+info["User_ID"]
         PlantID = "plant"+info["Plant_ID"]

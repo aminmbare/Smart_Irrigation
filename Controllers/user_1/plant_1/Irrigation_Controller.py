@@ -4,7 +4,7 @@ import requests
 import numpy as np 
 import tensorflow as tf
 import pickle 
-from Controller import controller
+from Abstract_Device_Controller import controller
 import time 
 import logging 
 import ast
@@ -70,7 +70,7 @@ class Controller_Irrigation(controller):
                     irrigation_time = self.irrigation_time(self._moisture)
                     logging.info(f"Irrigation system is On for {time} s")
                     self.send_actuation(True)
-                    requests.post(f'http://127.0.0.1:8080/irrigation/user={self._UserID[-1]}&plant={self._PlantID[-1]}',json.dumps({"duration":irrigation_time,"time":datetime.datetime.now().strftime("%m/%d/%y %H:%M:%S")}))
+                    requests.post(f'http://127.0.0.1:8080/irrigation?user={self._UserID[-1]}&plant={self._PlantID[-1]}',json.dumps({"duration":irrigation_time,"time":datetime.datetime.now().strftime("%m/%d/%y %H:%M:%S")}))
                     time.sleep(30) 
             
     def irrigation_decision(self,temperature,moisture)-> int: 
@@ -95,14 +95,13 @@ class Controller_Irrigation(controller):
         
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
-    with open("info.json", "r") as f: 
+    CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
+    Info_path = os.path.join(CURRENT_PATH, "info.json")
+    with open(Info_path, "r") as f: 
         info = json.load(f)
         UserID = info["User_ID"]
         PlantID = info["Plant_ID"]
-
         f.close()
-
 
     controller  = Controller_Irrigation(UserID,PlantID)
     controller.start()

@@ -11,12 +11,11 @@ import hashlib
 # this class will modifify catalog.json file 
 # and create a new folder for the user or plant contained the device connector and controllers
 class Scaler(object):
-    def __init__(self,bot_token: str)-> None:
+    def __init__(self)-> None:
             path = os.path.dirname(os.path.abspath(__file__))
             #open device_connector_temp of user 1
             # open MyMQTT of user 1
-            self.bot = telepot.Bot(bot_token)
-            MessageLoop(self.bot, {'registration': self.registation}).run_as_thread()
+          
             with open(os.path.join(path,"MyMQTT.py"), "r") as f:
                 self.MyMQTT = f.read()
                 f.close()
@@ -50,10 +49,15 @@ class Scaler(object):
             with open (os.path.join(path, "Controllers", "user_1","plant_1", "Controller.py"), "r") as f:
                 self.abstract_device_controller = f.read()
                 f.close()
+            # open Thinkspeak of user 1
+            with open(os.path.join(path,"ThinkSpeak","user_1","plant_1","ThinkSpeak.py"), "r") as f:
+                self.ThinkSpeak = f.read()
+                f.close()
             # Connectors path
             self.connector_path = os.path.join(path, "Connectors")
             # Controllers path
             self.controller_path = os.path.join(path, "Controllers")
+            self.ThinkSpeak = os.path.join(path, "ThinkSpeak")
             self.Connector_list = [(self.device_connector_humidity,"Device_Connector_humidity.py"), (self.device_connector_moisture,"Device_Connector_moisture.py"), (self.device_connector_temperature,"Device_Connector_temperature.py"),(self.abstract_device_connector,"Abstract_Device_Connector.py"),(self.MyMQTT,"MyMQTT.py")]
             self.Controller_list = [(self.irrigation_controller,"Irrigation_Controller.py"), (self.heath_controller,"Heating_Controller.py"),(self.MyMQTT,"MyMQTT.py"),(self.abstract_device_controller,"Controller.py")]
 
@@ -63,37 +67,20 @@ class Scaler(object):
             catalog = json.load(f)
             f.close()
         self.ID = len(catalog["Users"])+1
-        self.catalog["Users"][self.ID] =dictionary
+        catalog["Users"][self.ID] =dictionary
         # create a new folder for the user 
         new_user_path_connector = os.path.join(self.connector_path,f"user_{self.ID}")
         new_user_path_controller = os.path.join(self.controller_path,f"user_{self.ID}" )
+        new_user_path_thinkspeak = os.path.join(self.ThinkSpeak,f"user_{self.ID}" )
         os.mkdir(new_user_path_connector)
+        os.mkdir(new_user_path_thinkspeak)
         os.mkdir(new_user_path_controller)           
         # update catalog 
-        logging.info("NEXT STEP , TELEGRAM BOT USER REGISTRATION")
-
-        while not self.registration_over : 
-            time.sleep(5)
         with open("catalog.json", "w+") as f:  
-            json.dump(self.catalog, f,indent=4)
+            json.dump(catalog, f,indent=4)
             f.close()    
-          
-    def registration(self, msg): 
-        content_type, chat_type, chat_ID = telepot.glance(msg)
-        message = msg['text']
-        if message == "/start":
-            self.bot.sendMessage(chat_ID, text=f"Welcome user {self.ID} to the Smart Garden Bot")
-            self.bot.sendMessage(chat_ID, text="For the registration please send me your account password : /password <your password>")
-        elif message.startswith("/password"):
-            password =message.split(" ")[1]
-            hash_object = hashlib.sha256(password.encode())
-            hash_password = hash_object.hexdigest()
-            self.catalog["Users"][self.ID]["ChatBot"]["Password"] = hash_password
-            self.catalog["Users"][self.ID]["ChatBot"]["Chat_ID"] = chat_ID
             
-            self.bot.deleteMessage((chat_ID, msg["message_id"]))
-            self.bot.sendMessage(chat_ID, text="You have successfully registered to the Smart Garden Bot")
-            self.registration_over = True
+          
             
     def add_folder(self, user_key : str)-> bool:
         with open("catalog.json", "r") as f:
@@ -132,6 +119,9 @@ class Scaler(object):
         controller_path = os.path.join(self.controller_path, f"user_{user_key}")
         logging.info("Controller path is: %s", controller_path)   
         new_plant_path_controller = os.path.join(controller_path, f"plant_{plant_key}")
+        thinkspeak_path = os.path.join(self.ThinkSpeak, f"user_{user_key}")
+        new_plant_path_thinkspeak = os.path.join(thinkspeak_path, f"plant_{plant_key}")
+        
 
         for file , file_name in self.Connector_list:
             logging.info(f"File {file_name} is being added to the Connector folder for user {user_key} ")
@@ -153,6 +143,13 @@ class Scaler(object):
                     self.info["User_ID"] = f"user_{user_key}"
                     json.dumps(self.info,indent =4 )
                     f.close()
+        with open(os.path.join(new_plant_path_thinkspeak, "ThinkSpeakAdapter.py"), "w") as f:
+            f.write(self.ThinkSpeakAdapter)
+            f.close()
+        with open(os.path.join(new_plant_path_thinkspeak, "info.json"), "w") as f:
+            f.write(self.info)
+            f.close()
+        # update catalog
         with open("catalog.json", "w+") as f:
             json.dump(catalog, f,indent= 4)
             f.close()   
@@ -171,6 +168,8 @@ class Scaler(object):
         path = os.path.join(self.connector_path, f"user_{user_key}")
         shutil.rmtree(path)
         path = os.path.join(self.controller_path, f"user_{user_key}")
+        shutil.rmtree(path)
+        path = os.path.join(self.ThinkSpeak, f"user_{user_key}")
         shutil.rmtree(path)
         # update catalog
         with open("catalog.json", "w+") as f:
@@ -193,6 +192,8 @@ class Scaler(object):
         path = os.path.join(self.connector_path, f"user_{user_key}", f"plant_{plant_key}")
         shutil.rmtree(path)
         path = os.path.join(self.controller_path, f"user_{user_key}", f"plant_{plant_key}")
+        shutil.rmtree(path)
+        path = os.path.join(self.ThinkSpeak, f"user_{user_key}", f"plant_{plant_key}")
         shutil.rmtree(path)
         # update catalog
         with open("catalog.json", "w+") as f:

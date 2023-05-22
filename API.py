@@ -107,9 +107,9 @@ class CatalogManager:
                         logging.info("Chatbot Data found for  user%s" %(user_key))
                         return json.dumps(catalog['Users'][user_key]["ChatBot"])    
                 else : 
-                    cherrypy.HTTPError(400, f"User not found for {user_key} and {plant_key}")
+                    return json.dumps({"error":"User does not exist, Please register first by providing your data through the folling link: http://127.0.0.1:8080/add_user"})
             else : 
-                cherrypy.HTTPError(400, "Bad Catalog Request")
+               return  cherrypy.HTTPError(400, "Bad Catalog Request")
                 
 
         else : 
@@ -119,15 +119,18 @@ class CatalogManager:
     def POST(self,*uri,**param):
 
         body = cherrypy.request.body.read()
-        Input = json.load(body)
+        logging.info(body)
+        body = body.decode('utf-8')
+        Input = json.loads(body)
 
-    
+        logging.info(Input)
         if len(uri)!= 0 and uri[0] == "irrigation" : 
-            with open("Catalog.json",'w+') as json_file : 
-                catalog = json.loads(json_file)
+            with open(self.Catalog_path) as json_file : 
+                catalog = json.load(json_file)
                 json_file.close()
-                user_key = param["user"]
-                plant_key =  param["plant"]                
+            logging.info(catalog)
+            user_key = param["user"]
+            plant_key =  param["plant"]                
             last_update =  datetime.strptime(catalog["Users"][user_key]["Plants"][plant_key]["Irrigation Data"]["time"],'%m/%d/%y %H:%M:%S')
             new_update = datetime.strptime(Input["time"],'%m/%d/%y %H:%M:%S')
             if last_update.day ==  new_update.day :              
@@ -135,22 +138,33 @@ class CatalogManager:
             else : 
                 catalog["Users"][user_key]["Plants"][plant_key]["Irrigation Data"]["Number of irrigation This day"] = 1
             catalog["Users"][user_key]["Plants"][plant_key]["Irrigation Data"]["duration"] = Input["duration"]  
-            with open("catalog_test.json", "w") as json_file:
+            logging.info(catalog['Users'][user_key]["Plants"][plant_key])
+            with open("catalog.json", "w+") as json_file:
                 json.dump(catalog, json_file, indent=4)
                 json_file.close()
                 
         elif len(uri) != 0 and uri[0] =="health" : 
-            with open("Catalog.json") as json_file : 
-                catalog = json.loads(json_file)
+            with open(self.Catalog_path) as json_file : 
+                catalog = json.load(json_file)
                 json_file.close()
             user_key = param["user"]
             plant_key = param["plant"]
             catalog["Users"][user_key]["Plants"][plant_key]["health data"]["health status"] = Input["health"]
             catalog["Users"][user_key]["Plants"][plant_key]["health data"]["Last Update"] = Input["time"]
-            with open("catalog_test.json", "w") as json_file:
+            with open("catalog.json", "w+") as json_file:
                 json.dump(catalog, json_file, indent=4)
                 json_file.close()
-                
+        elif len(uri) != 0 and uri[0] =="add_chatbot_account" :
+            user = param["user"] 
+            with open(self.Catalog_path) as json_file :
+                catalog = json.load(json_file)
+                json_file.close()
+            catalog["Users"][user]["ChatBot"]["ChatID"] = Input["ChatID"]
+            catalog["Users"][user]["ChatBot"]["Password"] = Input["Password"]
+            with open("catalog.json", "w+") as json_file:
+                json.dump(catalog, json_file, indent=4)
+                json_file.close()
+        
         else : 
             return cherrypy.HTTPError(400, "Bad Post Request")
     @cherrypy.tools.json_in()
@@ -161,8 +175,13 @@ class CatalogManager:
         #Input = json.load(body)
 
         #logging.info(body["User_Name"])
-        Sca = Scaler()
+        with open(self.Catalog_path) as json_file:
+            logging.info("Catalog file opened")
+            catalog = json.load(json_file)
+            json_file.close()
+        Sca = Scaler(catalog["ChatBot_token"])
         if len(uri)!= 0 and uri[0] == "add_user": 
+            logging.info(body)
             Sca.add_user(body)
             return "User added"
         if len(uri)!= 0 and uri[0] == "add_plant": 

@@ -11,7 +11,7 @@
             "User_Name": "sarah",
             "ChatBot":{"ChatID": "966712244",
             "Password": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4"},
-            "Plants": {
+            "Plants": { 
                 "1": {
                     "Crop": "Tomato",
                     "ThingSpeak Field": {
@@ -104,91 +104,6 @@
                     }
                 }
             }
-        },
-        "2": {
-            "User_Name": "sarah",
-            "ThingSpeak Field": {
-                "url": "https://api.thingspeak.com/update.json",
-                "api key": "MV7B8DSLUNAL5ZMX",
-                "channel_id": "2090142"
-            },
-            "ChatBot": "6275431098:AAHCKqZl9UYPvmcwJ2c2atlJpkP-Wgy3q5c",
-            "Plants": {
-                "1": {
-                    "Crop": "Tomato",
-                    "Password": "",
-                    "ChatID": "",
-                    "irrigration": {
-                        "time": "",
-                        "duration": "",
-                        "Number of irrigation This day": 0
-                    },
-                    "health data": {
-                        "health status": "",
-                        "Last Update": ""
-                    },
-                    "topics": {
-                        "actuator": {
-                            "irrigation": "IOT_PROJECT/user2/plant1/irrigation/device5"
-                        },
-                        "Sensor": {
-                            "temperature": "IOT_PROJECT/user2/plant1/temperature/device1",
-                            "moisture": "IOT_PROJECT/user2/plant1/moisture/device2",
-                            "humidity": "IOT_PROJECT/user2/plant1/humidity/device3",
-                            "picture": "IOT_PROJECT/user2/plant1/image/device4"
-                        }
-                    },
-                    "Devices": {
-                        "1": {
-                            "Device_Name": "DHT1",
-                            "Measure_Type": [
-                                "temperature"
-                            ],
-                            "Available_Service": {
-                                "MQTT": {
-                                    "Service_IP": "broker.hivemq.com",
-                                    "topic": "IOT_PROJECT/user1/plant1/temperature"
-                                }
-                            }
-                        },
-                        "2": {
-                            "Device_Name": "Moisture sensor",
-                            "Measure_Type": [
-                                "moisture"
-                            ],
-                            "Available_Service": {
-                                "MQTT": {
-                                    "Service_IP": "broker.hivemq.com",
-                                    "topic": "IOT_PROJECT/user1/plant1/moisture"
-                                }
-                            }
-                        },
-                        "3": {
-                            "Device_Name": "humidity",
-                            "Measure_Type": [
-                                "humidity"
-                            ],
-                            "Available_Service": {
-                                "MQTT": {
-                                    "Service_IP": "broker.hivemq.com",
-                                    "topic": "IOT_PROJECT/user1/plant1/humidity"
-                                }
-                            }
-                        },
-                        "4": {
-                            "Device_Name": "Pi Camera",
-                            "Measure_type": "Image",
-                            "Available_Service": {
-                                "MQTT": {
-                                    "Service_IP": "broker.hivemq.com",
-                                    "topic": "IOT_PROJECT/user1/plant1/image"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
         }
-       
     }
 }
