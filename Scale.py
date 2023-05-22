@@ -46,18 +46,18 @@ class Scaler(object):
                 self.abstract_device_connector = f.read()
                 f.close()
             # open abstract class of device controller
-            with open (os.path.join(path, "Controllers", "user_1","plant_1", "Controller.py"), "r") as f:
+            with open (os.path.join(path, "Controllers", "user_1","plant_1", "Abstract_Device_Controller.py"), "r") as f:
                 self.abstract_device_controller = f.read()
                 f.close()
             # open Thinkspeak of user 1
-            with open(os.path.join(path,"ThinkSpeak","user_1","plant_1","ThinkSpeak.py"), "r") as f:
+            with open(os.path.join(path,"ThinkSpeak","user_1","plant_1","ThinkSpeakAdapter.py"), "r") as f:
                 self.ThinkSpeak = f.read()
                 f.close()
             # Connectors path
             self.connector_path = os.path.join(path, "Connectors")
             # Controllers path
             self.controller_path = os.path.join(path, "Controllers")
-            self.ThinkSpeak = os.path.join(path, "ThinkSpeak")
+            self.ThinkSpeak_path = os.path.join(path, "ThinkSpeak")
             self.Connector_list = [(self.device_connector_humidity,"Device_Connector_humidity.py"), (self.device_connector_moisture,"Device_Connector_moisture.py"), (self.device_connector_temperature,"Device_Connector_temperature.py"),(self.abstract_device_connector,"Abstract_Device_Connector.py"),(self.MyMQTT,"MyMQTT.py")]
             self.Controller_list = [(self.irrigation_controller,"Irrigation_Controller.py"), (self.heath_controller,"Heating_Controller.py"),(self.MyMQTT,"MyMQTT.py"),(self.abstract_device_controller,"Controller.py")]
 
@@ -94,6 +94,8 @@ class Scaler(object):
         os.mkdir(new_plant_path_connector)
         new_plant_path_controller = os.path.join(self.controller_path,f"user_{user_key}", f"plant_{number_of_plants+1}")
         os.mkdir(new_plant_path_controller)
+        new_plant_path_think_speak= os.path.join(self.ThinkSpeak_path,f"user_{user_key}", f"plant_{number_of_plants+1}")
+        os.mkdir(new_plant_path_think_speak)
         return True
     def add_plant(self,user_key: str,dictionary : dict)-> bool:
         
@@ -106,7 +108,7 @@ class Scaler(object):
 
         logging.info("User key is: %s", user_key)
         if user_key in catalog["Users"]:
-            catalog["Users"][user_key]["Plants"][f"plant_{plant_key}"] = dictionary
+            catalog["Users"][user_key]["Plants"][plant_key] = dictionary
         else : 
             return False 
  
@@ -119,7 +121,7 @@ class Scaler(object):
         controller_path = os.path.join(self.controller_path, f"user_{user_key}")
         logging.info("Controller path is: %s", controller_path)   
         new_plant_path_controller = os.path.join(controller_path, f"plant_{plant_key}")
-        thinkspeak_path = os.path.join(self.ThinkSpeak, f"user_{user_key}")
+        thinkspeak_path = os.path.join(self.ThinkSpeak_path, f"user_{user_key}")
         new_plant_path_thinkspeak = os.path.join(thinkspeak_path, f"plant_{plant_key}")
         
 
@@ -144,11 +146,14 @@ class Scaler(object):
                     json.dumps(self.info,indent =4 )
                     f.close()
         with open(os.path.join(new_plant_path_thinkspeak, "ThinkSpeakAdapter.py"), "w") as f:
-            f.write(self.ThinkSpeakAdapter)
+            f.write(self.ThinkSpeak)
             f.close()
         with open(os.path.join(new_plant_path_thinkspeak, "info.json"), "w") as f:
-            f.write(self.info)
+            self.info["Plant_ID"] = f"plant_{plant_key}"
+            self.info["User_ID"] = f"user_{user_key}"
+            json.dumps(self.info,indent = 4)
             f.close()
+
         # update catalog
         with open("catalog.json", "w+") as f:
             json.dump(catalog, f,indent= 4)
@@ -169,11 +174,11 @@ class Scaler(object):
         shutil.rmtree(path)
         path = os.path.join(self.controller_path, f"user_{user_key}")
         shutil.rmtree(path)
-        path = os.path.join(self.ThinkSpeak, f"user_{user_key}")
+        path = os.path.join(self.ThinkSpeak_path, f"user_{user_key}")
         shutil.rmtree(path)
         # update catalog
         with open("catalog.json", "w+") as f:
-            json.dump(catalog, f)
+            json.dump(catalog, f,indent=4)
             f.close()
     def delete_plant(self, user_key : str, plant_key : str)-> bool:
         # delete plant from catalog
@@ -193,7 +198,7 @@ class Scaler(object):
         shutil.rmtree(path)
         path = os.path.join(self.controller_path, f"user_{user_key}", f"plant_{plant_key}")
         shutil.rmtree(path)
-        path = os.path.join(self.ThinkSpeak, f"user_{user_key}", f"plant_{plant_key}")
+        path = os.path.join(self.ThinkSpeak_path, f"user_{user_key}", f"plant_{plant_key}")
         shutil.rmtree(path)
         # update catalog
         with open("catalog.json", "w+") as f:

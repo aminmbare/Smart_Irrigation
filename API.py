@@ -29,17 +29,13 @@ class CatalogManager:
                 details['port'] = catalog['port']
                 return json.dumps(details)
             
-                
-
-
             elif uri[1] == "topics":
                 # get the corresponding topic from  Catalog.json of corresponding program and type and user 
                 Val_type = params['type']
                 program = params['program']
                 user_key = params['user']
                 plant_key = params['plant']
-                
-                
+                 
                 if user_key in catalog['Users']:
                         if plant_key in catalog['Users'][user_key]["Plants"]:
                             if program in catalog['Users'][user_key]["Plants"][plant_key]['topics']:
@@ -149,8 +145,8 @@ class CatalogManager:
                 json_file.close()
             user_key = param["user"]
             plant_key = param["plant"]
-            catalog["Users"][user_key]["Plants"][plant_key]["health data"]["health status"] = Input["health"]
-            catalog["Users"][user_key]["Plants"][plant_key]["health data"]["Last Update"] = Input["time"]
+            catalog["Users"][user_key]["Plants"][plant_key]["Health Data"]["health status"] = Input["health"]
+            catalog["Users"][user_key]["Plants"][plant_key]["Health Data"]["Last Update"] = Input["time"]
             with open("catalog.json", "w+") as json_file:
                 json.dump(catalog, json_file, indent=4)
                 json_file.close()
@@ -171,21 +167,14 @@ class CatalogManager:
     def PUT(self,*uri,**param):
         body = cherrypy.request.json
 
-
-        #Input = json.load(body)
-
-        #logging.info(body["User_Name"])
-        with open(self.Catalog_path) as json_file:
-            logging.info("Catalog file opened")
-            catalog = json.load(json_file)
-            json_file.close()
-        Sca = Scaler(catalog["ChatBot_token"])
+        Sca = Scaler()
         if len(uri)!= 0 and uri[0] == "add_user": 
             logging.info(body)
             Sca.add_user(body)
             return "User added"
         if len(uri)!= 0 and uri[0] == "add_plant": 
             user_key=param["user"]
+            logging.info(body)
             if Sca.add_folder(user_key):
                 if Sca.add_plant(user_key,body):
                     return "Plant added"
@@ -203,16 +192,10 @@ class CatalogManager:
         if len(uri)!= 0 and uri[0] == "delete_plant": 
             user_ID=param["user"]
             plant_ID=param["plant"]
-            Sca.delete_plant(user_ID,plant_ID)
+            logging.info(Sca.delete_plant(user_ID,plant_ID))
             return "Plant deleted"
         
            
-   
-                
-
-         
-                
-
                 
 if __name__=="__main__":
     logging.basicConfig(level=logging.DEBUG,format=str('%(asctime)s - %(levelname)s - %(message)s'))

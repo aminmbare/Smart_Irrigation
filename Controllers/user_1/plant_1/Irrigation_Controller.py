@@ -74,8 +74,7 @@ class Controller_Irrigation(controller):
                     time.sleep(30) 
             
     def irrigation_decision(self,temperature,moisture)-> int: 
-        input = np.array([[moisture, temperature]])
-        
+        input = np.array([[moisture, temperature]])    
         result = self.irrigation_decision_model.predict(input)
         logging.info(f"Decision is {result}")
     
@@ -85,11 +84,9 @@ class Controller_Irrigation(controller):
     def irrigation_time(self,moisture)-> float :
         result = self.irrigation_time_model.predict([[moisture]])
         logging.info(f"Time is {result[0]}")
-       
         return result[0][0]
     
     def send_actuation(self,value:bool)-> None :
-        
         new_topic = requests.get(f"http://127.0.0.1:8080/Catalog/topics?user={self._UserID[-1]}&plant={self._PlantID[-1]}&program=actuator&type=irrigation").json()["topic"]
         self.publish(value,new_topic[0])
         
@@ -102,6 +99,7 @@ if __name__ == "__main__":
         UserID = info["User_ID"]
         PlantID = info["Plant_ID"]
         f.close()
+
 
     controller  = Controller_Irrigation(UserID,PlantID)
     controller.start()

@@ -54,7 +54,7 @@ class device_connector_humidity(device_connector):
         self._count +=1
         headers = {'Content-type': 'application/json', 'Accept': 'raw'}
         requests.post(url=self._TS["url"], data=data_upload, headers=headers)
-
+        
 if __name__ == "__main__": 
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
     # open info.json and get User ID and Plant ID

@@ -9,9 +9,11 @@
     "Users": {
         "1": {
             "User_Name": "sarah",
-            "ChatBot":{"ChatID": "966712244",
-            "Password": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4"},
-            "Plants": { 
+            "ChatBot": {
+                "ChatID": 966712244,
+                "Password": "084328c53a9de563b83b23b6f500521ff442af7cfe60f104574c2c8cce22cf2a"
+            },
+            "Plants": {
                 "1": {
                     "Crop": "Tomato",
                     "ThingSpeak Field": {
@@ -19,15 +21,14 @@
                         "api key": "D74Q4NP0B2OHUOCP",
                         "channel_id": "2136051"
                     },
-                    "Password": "",
                     "Irrigation Data": {
-                        "time": "",
-                        "duration": "",
-                        "Number of irrigation This day": 0
+                        "time": "05/11/23 11:07:05",
+                        "duration": 2.3239207509386883,
+                        "Number of irrigation This day": 2
                     },
                     "Health Data": {
-                        "health status": "",
-                        "Last Update": ""
+                        "health status": "late_blight",
+                        "Last Update": "05/22/23 16:47:32"
                     },
                     "topics": {
                         "actuator": {
