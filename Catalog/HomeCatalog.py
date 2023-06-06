@@ -112,7 +112,7 @@ class CatalogManager:
             return cherrypy.HTTPError(400, "Bad Get Request")    
                     
     
-    def POST(self,*uri,**param):
+    def PUT(self,*uri,**param):
 
         body = cherrypy.request.body.read()
         logging.info(body)
@@ -166,7 +166,7 @@ class CatalogManager:
         else : 
             return cherrypy.HTTPError(400, "Bad Post Request")
     @cherrypy.tools.json_in()
-    def PUT(self,*uri,**param):
+    def POST(self,*uri,**param):
         body = cherrypy.request.json
 
         Sca = Scaler()
