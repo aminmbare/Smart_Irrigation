@@ -2,8 +2,14 @@
     "Project_Owner": "Group??",
     "Projec_tName": "SmartPlant",
     "LastUpdate": "",
-    "broker": "broker.hivemq.com",
-    "port": 1883,
+    "MQTT": {
+        "broker": "broker.hivemq.com",
+        "port": 1883
+    },
+    "Server": {
+        "ip_address": "127.0.0.1",
+        "port": "8080"
+    },
     "base_Topic": "IOT_PROJECT",
     "ChatBot_token": "5955948234:AAGBi29Pp40XV2M-VeqxaLoDH2axNJlFUQc",
     "Users": {
@@ -16,19 +22,19 @@
             "Plants": {
                 "1": {
                     "Crop": "Tomato",
-                    "ThingSpeak Field": {
+                    "ThinkSpeak_Field": {
                         "url": "https://api.thingspeak.com/update.json",
                         "api key": "D74Q4NP0B2OHUOCP",
                         "channel_id": "2136051"
                     },
-                    "Irrigation Data": {
-                        "time": "05/11/23 11:07:05",
-                        "duration": 2.3239207509386883,
-                        "Number of irrigation This day": 2
+                    "Irrigation_Data": {
+                        "time": "05/31/23 23:45:42",
+                        "duration": 1.9079412047629072,
+                        "Number of irrigation This day": 6
                     },
-                    "Health Data": {
-                        "health status": "late_blight",
-                        "Last Update": "05/22/23 16:47:32"
+                    "Health_Data": {
+                        "health_status": "late_blight",
+                        "Last_Update": "05/22/23 16:47:32"
                     },
                     "topics": {
                         "actuator": {

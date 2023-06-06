@@ -1,0 +1,17 @@
+{
+    "User_ID":"1", 
+    "Plant_ID":"1", 
+    "Catalog":{
+        "ip_address":"127.0.0.1",
+        "port":"8080"    
+            },
+    "MQTT": {
+            "broker":"broker.hivemq.com", 
+            "port":"1883"
+            },
+    "ThinkSpeak_Field":{ 
+        "url": "https://api.thingspeak.com/update.json",
+        "api key": "D74Q4NP0B2OHUOCP",
+        "channel_id": "2136051"
+    }
+}

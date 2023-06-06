@@ -124,18 +124,20 @@ class CatalogManager:
             with open(self.Catalog_path) as json_file : 
                 catalog = json.load(json_file)
                 json_file.close()
-            logging.info(catalog)
+
             user_key = param["user"]
             plant_key =  param["plant"]                
-            last_update =  datetime.strptime(catalog["Users"][user_key]["Plants"][plant_key]["Irrigation Data"]["time"],'%m/%d/%y %H:%M:%S')
+            last_update =  datetime.strptime(catalog["Users"][user_key]["Plants"][plant_key]["Irrigation_Data"]["time"],'%m/%d/%y %H:%M:%S')
             new_update = datetime.strptime(Input["time"],'%m/%d/%y %H:%M:%S')
             if last_update.day ==  new_update.day :              
-                catalog["Users"][user_key]["Plants"][plant_key]["Irrigation Data"]["Number of irrigation This day"] += 1
+                catalog["Users"][user_key]["Plants"][plant_key]["Irrigation_Data"]["Number of irrigation This day"] += 1
+
             else : 
-                catalog["Users"][user_key]["Plants"][plant_key]["Irrigation Data"]["Number of irrigation This day"] = 1
-            catalog["Users"][user_key]["Plants"][plant_key]["Irrigation Data"]["duration"] = Input["duration"]  
+                catalog["Users"][user_key]["Plants"][plant_key]["Irrigation_Data"]["Number of irrigation This day"] = 1
+            catalog["Users"][user_key]["Plants"][plant_key]["Irrigation_Data"]["duration"] = Input["duration"]  
+            catalog["Users"][user_key]["Plants"][plant_key]["Irrigation_Data"]["time"] = Input["time"]
             logging.info(catalog['Users'][user_key]["Plants"][plant_key])
-            with open("catalog.json", "w+") as json_file:
+            with open(self.Catalog_path, "w+") as json_file:
                 json.dump(catalog, json_file, indent=4)
                 json_file.close()
                 
@@ -145,8 +147,8 @@ class CatalogManager:
                 json_file.close()
             user_key = param["user"]
             plant_key = param["plant"]
-            catalog["Users"][user_key]["Plants"][plant_key]["Health Data"]["health status"] = Input["health"]
-            catalog["Users"][user_key]["Plants"][plant_key]["Health Data"]["Last Update"] = Input["time"]
+            catalog["Users"][user_key]["Plants"][plant_key]["Health_Data"]["health_status"] = Input["health"]
+            catalog["Users"][user_key]["Plants"][plant_key]["Health_Data"]["Last_Update"] = Input["time"]
             with open("catalog.json", "w+") as json_file:
                 json.dump(catalog, json_file, indent=4)
                 json_file.close()
@@ -157,7 +159,7 @@ class CatalogManager:
                 json_file.close()
             catalog["Users"][user]["ChatBot"]["ChatID"] = Input["ChatID"]
             catalog["Users"][user]["ChatBot"]["Password"] = Input["Password"]
-            with open("catalog.json", "w+") as json_file:
+            with open(self.Catalog_path, "w+") as json_file:
                 json.dump(catalog, json_file, indent=4)
                 json_file.close()
         

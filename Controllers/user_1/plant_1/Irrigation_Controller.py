@@ -24,7 +24,7 @@ class Controller_Irrigation(controller):
         self._moisture = 0
         self._temperature_state = False 
         self._moisture_state = False 
-        self.client = MyMQTT(self._ClientID, self.broker, self.port,self)
+        self.client = MyMQTT(self._ClientID, self.broker, self.mqtt_port,self)
         self.ValueType = "Irrigation" 
         self.message = {"Topic": "" , "ClientID":self._ClientID,
                             "INFO":{"Type":self.ValueType , "Value":None , "Time":str('{:%Y-%m-%d %H:%M:%S}'.format(datetime.datetime.now())),
@@ -41,8 +41,8 @@ class Controller_Irrigation(controller):
         self.client.myPublish(topic, self.message)
         
     def subscribe(self): 
-        temperature_topic = (requests.get(f'http://127.0.0.1:8080/Catalog/topics?user={self._UserID[-1]}&plant={self._PlantID[-1]}&program=Sensor&type=temperature').json())["topic"]
-        moisture_topic = (requests.get(f'http://127.0.0.1:8080/Catalog/topics?user={self._UserID[-1]}&plant={self._PlantID[-1]}&program=Sensor&type=moisture').json())["topic"]
+        temperature_topic = (requests.get(f'http://{self.catalog_address}:{self.catalog_port}/Catalog/topics?user={self._UserID[-1]}&plant={self._PlantID[-1]}&program=Sensor&type=temperature').json())["topic"]
+        moisture_topic = (requests.get(f'http://{self.catalog_address}:{self.catalog_port}/Catalog/topics?user={self._UserID[-1]}&plant={self._PlantID[-1]}&program=Sensor&type=moisture').json())["topic"]
         self._topics = [(temperature_topic,0),(moisture_topic,0)]
         self.client.mySubscribe(self._topics)
         
@@ -50,8 +50,9 @@ class Controller_Irrigation(controller):
         self.client.stop()
     def notify(self,topic,msg):        
 
-        dict_str = msg.decode("UTF-8")
-        mydata = ast.literal_eval(dict_str)
+        mydata = self.decryptdat(msg)
+        logging.info(f"Message received from {topic} : {mydata}")
+        #mydata = ast.literal_eval(dict_str)
         if topic == f"IOT_PROJECT/{self._UserID}/{self._PlantID}/temperature/device1" and not self._temperature_state :
 
                 self._temperature_state = True 
@@ -70,7 +71,7 @@ class Controller_Irrigation(controller):
                     irrigation_time = self.irrigation_time(self._moisture)
                     logging.info(f"Irrigation system is On for {time} s")
                     self.send_actuation(True)
-                    requests.post(f'http://127.0.0.1:8080/irrigation?user={self._UserID[-1]}&plant={self._PlantID[-1]}',json.dumps({"duration":irrigation_time,"time":datetime.datetime.now().strftime("%m/%d/%y %H:%M:%S")}))
+                    requests.put(f'http://{self.catalog_address}:{self.catalog_port}/irrigation?user={self._UserID[-1]}&plant={self._PlantID[-1]}',json.dumps({"duration":irrigation_time,"time":datetime.datetime.now().strftime("%m/%d/%y %H:%M:%S")}))
                     time.sleep(30) 
             
     def irrigation_decision(self,temperature,moisture)-> int: 
@@ -87,17 +88,17 @@ class Controller_Irrigation(controller):
         return result[0][0]
     
     def send_actuation(self,value:bool)-> None :
-        new_topic = requests.get(f"http://127.0.0.1:8080/Catalog/topics?user={self._UserID[-1]}&plant={self._PlantID[-1]}&program=actuator&type=irrigation").json()["topic"]
+        new_topic = requests.get(f"http://{self.catalog_address}:{self.catalog_port}/Catalog/topics?user={self._UserID[-1]}&plant={self._PlantID[-1]}&program=actuator&type=irrigation").json()["topic"]
         self.publish(value,new_topic[0])
         
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
     CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
-    Info_path = os.path.join(CURRENT_PATH, "info.json")
-    with open(Info_path, "r") as f: 
-        info = json.load(f)
-        UserID = info["User_ID"]
-        PlantID = info["Plant_ID"]
+    configs_path = os.path.join(CURRENT_PATH, "configs.json")
+    with open(configs_path, "r") as f: 
+        configs = json.load(f)
+        UserID = configs["User_ID"]
+        PlantID = configs["Plant_ID"]
         f.close()
 
 
