@@ -52,7 +52,7 @@ class Controller_health(controller):
         health_status = resp.json()
         
         logging.info(f"leaf disease detection Worked Succesfully, the response was {health_status}")
-        requests.post(f'http://127.0.0.1:8080/health?user={self._UserID[-1]}&plant={self._PlantID[-1]}',json.dumps(health_status))
+        requests.put(f'http://127.0.0.1:8080/health?user={self._UserID[-1]}&plant={self._PlantID[-1]}',json.dumps(health_status))
 
     
 if __name__ == "__main__":

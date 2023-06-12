@@ -6,12 +6,14 @@ import time
 import logging
 import os
 import ast
+from cryptography.fernet import Fernet
 class ThinkSpeak: 
-    def __init__(self,UserID,PlantID, broker : str ,mqtt_port : int,ThinkSpeakField: dict,catalog_ip : str , catalog_port : str) -> None:
+    def __init__(self,UserID,PlantID, broker : str ,mqtt_port : int,ThinkSpeakField: dict,catalog_ip : str , catalog_port : str,key: str) -> None:
         self.UserID = UserID
         self.PlantID = PlantID
         self.catalog_ip = catalog_ip
         self.catalog_port = catalog_port
+        self.key = key
         self.clientID = "ThinkSpeak_adapter_"+"user"+str(UserID)+"_"+"plant"+str(PlantID)
         self.client = MyMQTT(self.clientID,broker,int(mqtt_port), self)
         self.temperature = None 
@@ -35,8 +37,10 @@ class ThinkSpeak:
     def stop(self)-> None : 
         self.client.stop()
     def notify(self,topic, msg):
-        dict_str = msg.decode("UTF-8")
-        msg = ast.literal_eval(dict_str)
+        #dict_str = msg.decode("UTF-8")
+        #msg = ast.literal_eval(dict_str)
+        msg = self.decryptdat(msg)
+
         logging.info("Received message: " + str(msg) + " on topic: " + str(topic))
         
         if  topic == "IOT_PROJECT/user1/plant1/temperature/device1": 
@@ -83,6 +87,10 @@ class ThinkSpeak:
             requests.post(url=self._ThinkSpeakField["url"], data=data_upload, headers=headers)
             logging.info("Sensor Data has been uploaded to ThingSpeak ")
             logging.info("Humidity value is: " + str(self.humidity))
+    
+    def decryptdat(self,msg:bytes): 
+        f = Fernet(self.key)
+        return json.loads(f.decrypt(msg).decode())
   
 
 if __name__ ==  "__main__": 
@@ -99,12 +107,13 @@ if __name__ ==  "__main__":
         ThinkSpeakField = configs["ThinkSpeak_Field"]
         catalog_ip = configs["Catalog"]["ip_address"]
         catalog_port = configs["Catalog"]["port"]
+        key = configs["Encryption_key"].encode('utf-8') 
         f.close()
     # open ThingSpeak.json and get ThingSpeak User_Catalog
 
 
 
-    TS = ThinkSpeak(UserID, PlantID,mqtt_broker,mqtt_port,ThinkSpeakField,catalog_ip,catalog_port)
+    TS = ThinkSpeak(UserID, PlantID,mqtt_broker,mqtt_port,ThinkSpeakField,catalog_ip,catalog_port,key)
     
     TS.start()
     TS.subscribe()

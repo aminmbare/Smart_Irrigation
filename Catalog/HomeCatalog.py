@@ -108,7 +108,7 @@ class CatalogManager:
                return  cherrypy.HTTPError(400, "Bad Catalog Request")
                 
 
-        else : 
+        else :    
             return cherrypy.HTTPError(400, "Bad Get Request")    
                     
     

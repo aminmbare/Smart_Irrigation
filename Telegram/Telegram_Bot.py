@@ -64,7 +64,7 @@ class SwitchBot:
         hash_password = hash_object.hexdigest()
         #_account = requests.get(f'http://127.0.0.1:8080/Catalog/ChatBot?user={usernumber}').json()
         chatbot = {"ChatID":chat_ID,"Password":hash_password}
-        requests.post(f'http://127.0.0.1:8080/add_chatbot_account?user={usernumber}',json.dumps(chatbot))
+        requests.put(f'http://127.0.0.1:8080/add_chatbot_account?user={usernumber}',json.dumps(chatbot))
         self.bot.deleteMessage((chat_ID,msg_id))
          
 

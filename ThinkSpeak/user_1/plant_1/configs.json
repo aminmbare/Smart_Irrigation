@@ -13,5 +13,6 @@
         "url": "https://api.thingspeak.com/update.json",
         "api key": "D74Q4NP0B2OHUOCP",
         "channel_id": "2136051"
-    }
+    },
+    "Encryption_key": "OD0_bavVNBBv2oEB4sajrVTCMnVmHgGXoZMbb2ixu3E="
 }
