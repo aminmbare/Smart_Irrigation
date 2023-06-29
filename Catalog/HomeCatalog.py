@@ -110,7 +110,7 @@ class CatalogManager:
 
         else :    
             return cherrypy.HTTPError(400, "Bad Get Request")    
-                    
+                     
     
     def PUT(self,*uri,**param):
 
