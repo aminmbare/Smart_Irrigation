@@ -23,7 +23,6 @@ class device_connector_moisture(device_connector):
                             "INFO":{"Type":self._val_type , "Value":None , "Time":'',
                             "Unit":"%"}}
 
-
         self.client = MyMQTT(self._ClientID, self.broker, self.mqtt_port, None)
         
 

@@ -170,10 +170,12 @@ class CatalogManager:
         body = cherrypy.request.json
 
         Sca = Scaler()
+        ## add a user to catalog 
         if len(uri)!= 0 and uri[0] == "add_user": 
             logging.info(body)
             Sca.add_user(body)
             return "User added"
+        ## add a plant to catalog 
         if len(uri)!= 0 and uri[0] == "add_plant": 
             user_key=param["user"]
             logging.info(body)
@@ -187,10 +189,12 @@ class CatalogManager:
     
     def DELETE(self,*uri, **param): 
         Sca = Scaler()
+        ## delete a user 
         if len(uri)!= 0 and uri[0] == "delete_user": 
             user_ID=param["user"]
             Sca.delete_user(user_ID)
             return "User deleted"
+        ## delete a plant
         if len(uri)!= 0 and uri[0] == "delete_plant": 
             user_ID=param["user"]
             plant_ID=param["plant"]

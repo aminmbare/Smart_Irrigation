@@ -6,15 +6,14 @@ import os
 import shutil
 from cryptography.fernet import Fernet
 
-#  Upon receiving a request to add a user or plant for a user 
-# this class will modifify catalog.json file 
-# and create a new folder for the user or plant contained the device connector and controllers
+
 class Scaler(object):
+    """Upon receiving a request to add a user or plant for a user , this class will modifify catalog.json file
+    and create a new folder for the user or plant contained the device connector and controllers    
+    """
     def __init__(self)-> None:
-            path = os.path.dirname(os.path.abspath(__file__))
-            #open device_connector_temp of user 1
+            path = os.path.dirname(os.path.abspath(__file__))          
             # open MyMQTT of user 1
-          
             with open(os.path.join(path,"..", "Connectors", "user_1", "plant_1","MyMQTT.py"), "r") as f:
                 self.MyMQTT = f.read()
                 f.close()
