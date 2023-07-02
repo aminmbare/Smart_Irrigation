@@ -7,7 +7,7 @@ import hashlib
 import requests
 import datetime
 import time
-from ThinkSpeak.user_1.plant_1.MyMQTT import MyMQTT
+from MyMQTT import *
 import json
 ## make a telegram bot that informs the user about the health status of the plant
 ## the bot is able to switch on/off the irrigation system
@@ -73,9 +73,10 @@ class SwitchBot:
         message = msg['text']
         logging.info("Chat ID is %s",chat_ID)
         if message.startswith("/register"):
-             self.registration(message,chat_ID,msg["message_id"])
-             return 
-        if message == "/start":
+            logging.info("User %s is trying to register",chat_ID)
+            self.registration(message,chat_ID,msg["message_id"])
+            self.bot.sendMessage(chat_ID,text = "You are now registered")
+        elif message == "/start":
             self.bot.sendMessage(chat_ID, text="Welcome to the Smart Garden Bot")
             self.bot.sendMessage(chat_ID,text = "Please insert your user number and password with the following format: \n /login usernumber password")
 
