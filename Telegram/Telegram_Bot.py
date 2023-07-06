@@ -14,6 +14,10 @@ import json
 import logging
 class SwitchBot:
     def __init__(self,token :str ) -> None:
+        """
+        make a telegram bot that informs the user about the health status of the plant
+        the bot is able to switch on/off the irrigation system
+        """
         self.bot = telepot.Bot(token)
         mqtt_details = (requests.get('http://127.0.0.1:8080/Catalog/mqtt_details')).json()
         
@@ -34,8 +38,12 @@ class SwitchBot:
 
         self.client.MyPublish(topic, message)    
     def authentication(self,message:str,chat_ID:str, msg_id)-> None : 
+        """
+        This method is used to authenticate the user to the system
+        """
         usernumber = message.split(" ")[1]
         password = message.split(" ")[2]
+        ## the password is hashed  before being sent to the server
         hash_object = hashlib.sha256(password.encode())
         hash_password = hash_object.hexdigest()
         _account=requests.get(f'http://127.0.0.1:8080/Catalog/ChatBot?user={usernumber}').json()
@@ -54,6 +62,9 @@ class SwitchBot:
         else : 
                 self.bot.sendMessage(chat_ID, text="Wrong password or usernumber")
     def registration(self,message : str,chat_ID:str,msg_id)-> None : 
+        """ 
+        This method is used to register a new user to the system
+        """
         check_user_exitance = requests.get(f'http://127.0.0.1:8080/Catalog/ChatBot?user={message.split(" ")[1]}').json()
         if "error" in check_user_exitance.keys():
             self.bot.sendMessage(chat_ID, text=check_user_exitance["error"])
