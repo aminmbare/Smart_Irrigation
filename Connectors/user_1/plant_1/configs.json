@@ -7,8 +7,19 @@
     },
     "MQTT": {
         "broker":"broker.hivemq.com", 
-        "port":"1883"
-    }, 
+        "port":"1883",
+        "topics": {
+            "actuator": {
+                "irrigation": "IOT_PROJECT/user1/plant1/irrigation/device5"
+            },
+            "Sensor": {
+                "temperature": "IOT_PROJECT/user1/plant1/temperature/device1",
+                "moisture": "IOT_PROJECT/user1/plant1/moisture/device2",
+                "humidity": "IOT_PROJECT/user1/plant1/humidity/device3",
+                "image": "IOT_PROJECT/user1/plant1/image/device4"
+            }
+    } 
+    },
     "Encryption_key":  "OD0_bavVNBBv2oEB4sajrVTCMnVmHgGXoZMbb2ixu3E="
     
 }

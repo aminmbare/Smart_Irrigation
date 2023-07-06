@@ -106,6 +106,22 @@ class Scaler(object):
         os.mkdir(new_plant_path_think_speak)
         return True
     def add_plant(self,user_key: str,dictionary : dict)-> bool:
+        def get_topics(user_id : int, plant_id: int)->  dict: 
+            topics = dict()
+            base_topic = f"IOT_PROJECT/user{user_id}/plant{plant_id}"
+            topics["actuator"]= {"irrigation":base_topic+"/irrigation/device5"}
+            topics["Sensor"]={"temperature":  base_topic+"/temperature/device1","moisture":base_topic+"/moisture/device2",
+                                             "humidity":base_topic+"/humidity/device3","image":base_topic+"/image/device4"}
+
+            return topics
+        def set_catalog_topics(dictioary: dict,user_id,plant_id)-> dict : 
+            measures = ["temperature", "moisture", "humidity","image", "irrigation"]
+            base_topic = f"IOT_PROJECT/user{user_id}/plant{plant_id}"
+            for m in measures: 
+                for keys , values in dictioary["Devices"].items():
+                    if m in values["Measure_Type"]:
+                        values["Available_Service"]["MQTT"]["topic"] = base_topic+f"/{m}"
+            return dictioary         
         path = os.path.dirname(os.path.abspath(__file__))
         # add plant to catalog
         with open(os.path.join(path,"catalog.json"), "r") as f:
@@ -116,7 +132,7 @@ class Scaler(object):
 
         logging.info("User key is: %s", user_key)
         if user_key in catalog["Users"]:
-            catalog["Users"][user_key]["Plants"][plant_key] = dictionary
+            catalog["Users"][user_key]["Plants"][plant_key] = set_catalog_topics(dictionary,user_key,plant_key)
         else : 
             return False 
  
@@ -132,18 +148,22 @@ class Scaler(object):
         new_plant_path_thinkspeak = os.path.join(thinkspeak_path, f"plant_{plant_key}")
         
         encryption_key = Fernet.generate_key().decode("utf-8")
+        ## set up  the Connectors scripts, such as temperature, moisture and humidity connectors
         for file , file_name in self.Connector_list:
             logging.info(f"File {file_name} is being added to the Connector folder for user {user_key} ")
             with open(os.path.join(new_plant_path_connector, file_name), "w") as f:
                 f.write(file)
                 f.close()
+        ## set the the configuration file for the connectors
         with open(os.path.join(new_plant_path_connector, "configs.json"), "w") as f:
                 self.connector_configs["Plant_ID"] = str(plant_key)
                 self.connector_configs["User_ID"] = str(user_key)
                 self.connector_configs["Encryption_key"] = encryption_key
+                self.connector_configs["MQTT"]["topics"] = get_topics(user_key,plant_key)
                 
                 json.dump(self.connector_configs,f,indent = 4)
                 f.close()
+        ## set the controller scripts , such as health and irrigation controller 
         for file , file_name in self.Controller_list:
                 logging.info(f"File {file_name} is being added to the Controller folder for user {user_key} ")
                 with open(os.path.join(new_plant_path_controller, file_name), "w") as f:
@@ -153,6 +173,7 @@ class Scaler(object):
             self.controllers_configs["Plant_ID"] = str(plant_key)
             self.controllers_configs["User_ID"] = str(user_key)
             self.controllers_configs["Encryption_key"] = encryption_key
+            self.controllers_configs["MQTT"]["topics"] = get_topics(user_key,plant_key)
             json.dump(self.controllers_configs,f,indent =4 )
             f.close()
         with open(os.path.join(new_plant_path_thinkspeak, "ThinkSpeakAdapter.py"), "w") as f:
@@ -165,6 +186,8 @@ class Scaler(object):
             self.ThinkSpeak_configs["Plant_ID"] = str(plant_key)
             self.ThinkSpeak_configs["User_ID"] = str(user_key)
             self.ThinkSpeak_configs['ThinkSpeak_Field'] = dictionary['ThinkSpeak_Field']
+            self.ThinkSpeak_configs["Encryption_key"] = encryption_key
+            self.ThinkSpeak_configs["MQTT"]["topics"] = get_topics(user_key,plant_key)
             logging.info(self.ThinkSpeak_configs)
             json.dump(self.ThinkSpeak_configs,f,indent = 4)
             f.close()

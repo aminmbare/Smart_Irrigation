@@ -15,7 +15,7 @@ class Controller_health(controller):
     This class manages the health of the plant ,
     it subscribes to the image topic and sends the picture of the plant to the a health inspection microservice
     running on the cloud, the microservice in cloud  returns the health status of the plant 
-    WARNING : This class will not work ,  unless you have the health inspection microservice running on the cloud
+
     """
     def __init__(self,UserID : str , PlantID : str )->None: 
         super(Controller_health,self).__init__()

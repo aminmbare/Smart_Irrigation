@@ -24,18 +24,20 @@ class CatalogManager:
                 json_file.close()
 
             if uri[1] == "mqtt_details":
+                ## not used 
                 details = {}
-                details['broker'] = catalog["broker"]
-                details['port'] = catalog['port']
+                details['broker'] = catalog["MQTT"]["broker"]
+                details['port'] = catalog["MQTT"]['port']
                 return json.dumps(details)
             
             elif uri[1] == "topics":
+                
+                ## not used 
                 # get the corresponding topic from  Catalog.json of corresponding program and type and user 
                 Val_type = params['type']
                 program = params['program']
                 user_key = params['user']
                 plant_key = params['plant']
-                 
                 if user_key in catalog['Users']:
                         if plant_key in catalog['Users'][user_key]["Plants"]:
                             if program in catalog['Users'][user_key]["Plants"][plant_key]['topics']:
@@ -51,16 +53,8 @@ class CatalogManager:
                 else : 
                     return cherrypy.HTTPError(400, f"User not found for {user_key} and {plant_key}")                     
 
-
-            elif uri[1] =="user_info":   
-                user_key = params["user"]
-                if user_key in catalog["Users"]:
-
-                        logging.info("User found for %s" %(user_key))
-                        return json.dumps(catalog["Users"][user_key])  
-               
-                return cherrypy.HTTPError(400, f"User not found")
-                
+            
+            ## Get the ThingSpeak Field of a plant    
             elif uri[1] == "ThingSpeak": 
                 logging.debug("ThingSpeak request")
                 user_key = params["user"]
@@ -71,23 +65,24 @@ class CatalogManager:
                         return json.dumps(catalog['Users'][user_key]["Plants"][plant_key]['ThingSpeak Field'])
                 else : 
                     return cherrypy.HTTPError(400, f"User not found for {user_key} and {plant_key}")
+            ## Get the irrigation status of a plant
             elif uri[1] == "Irrigation_Status":
                 user_key = params["user"]
                 plant_key = params["plant"]
                 if user_key in catalog['Users']:
                     if plant_key in catalog['Users'][user_key]["Plants"]:
                         logging.info("Irrigation status found for %s and %s" %(user_key, plant_key))
-                        return json.dumps(catalog['Users'][user_key]["Plants"][plant_key]["Irrigation Data"])     
+                        return json.dumps(catalog['Users'][user_key]["Plants"][plant_key]["Irrigation_Data"])     
                 return cherrypy.HTTPError(400, f"Error")
           
-          
+            ## Get the health status of a plant
             elif uri[1] == "Health_Status":
                 user_key = params["user"]
                 plant_key = params["plant"]
                 if user_key in catalog['Users']:
                     if plant_key in catalog['Users'][user_key]["Plants"]:
                         logging.info("Health status found for %s and %s" %(user_key, plant_key))
-                        return json.dumps(catalog['Users'][user_key]["Plants"][plant_key]["Health Data"])    
+                        return json.dumps(catalog['Users'][user_key]["Plants"][plant_key]["Health_Data"])    
                     else : 
                         cherrypy.HTTPError(400, f"Plant not found for {user_key} and {plant_key}")
                 else : 
@@ -120,6 +115,8 @@ class CatalogManager:
         Input = json.loads(body)
 
         logging.info(Input)
+        
+        ## Update the irrigation status of a plant 
         if len(uri)!= 0 and uri[0] == "irrigation" : 
             with open(self.Catalog_path) as json_file : 
                 catalog = json.load(json_file)
@@ -140,7 +137,8 @@ class CatalogManager:
             with open(self.Catalog_path, "w+") as json_file:
                 json.dump(catalog, json_file, indent=4)
                 json_file.close()
-                
+        
+        ## Update the health status of a plant  
         elif len(uri) != 0 and uri[0] =="health" : 
             with open(self.Catalog_path) as json_file : 
                 catalog = json.load(json_file)
@@ -149,7 +147,7 @@ class CatalogManager:
             plant_key = param["plant"]
             catalog["Users"][user_key]["Plants"][plant_key]["Health_Data"]["health_status"] = Input["health"]
             catalog["Users"][user_key]["Plants"][plant_key]["Health_Data"]["Last_Update"] = Input["time"]
-            with open("catalog.json", "w+") as json_file:
+            with open(self.Catalog_path, "w+") as json_file:
                 json.dump(catalog, json_file, indent=4)
                 json_file.close()
         elif len(uri) != 0 and uri[0] =="add_chatbot_account" :
