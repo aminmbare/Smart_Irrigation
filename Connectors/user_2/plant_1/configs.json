@@ -1,0 +1,24 @@
+{
+    "User_ID": "2",
+    "Plant_ID": "1",
+    "Catalog": {
+        "ip_address": "127.0.0.1",
+        "port": "8080"
+    },
+    "MQTT": {
+        "broker": "broker.hivemq.com",
+        "port": "1883",
+        "topics": {
+            "actuator": {
+                "irrigation": "IOT_PROJECT/user2/plant1/irrigation/device5"
+            },
+            "Sensor": {
+                "temperature": "IOT_PROJECT/user2/plant1/temperature/device1",
+                "moisture": "IOT_PROJECT/user2/plant1/moisture/device2",
+                "humidity": "IOT_PROJECT/user2/plant1/humidity/device3",
+                "image": "IOT_PROJECT/user2/plant1/image/device4"
+            }
+        }
+    },
+    "Encryption_key": "kM-ZriFAoOqF5pA0vp5GVbe64Go_2zc2fgXXtUJf09c="
+}

@@ -13,10 +13,3 @@ The proposed IoT platform aims at monitoring the health status of the plants and
 
 - Irrigation control won't function unless the health service deployed on EC2 instance is running, the link for the application's repository [link](https://github.com/aminmbare/IOT-API) .
 
-
-
-
-
-
-
-

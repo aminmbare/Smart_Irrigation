@@ -28,13 +28,13 @@
                         "channel_id": "2136051"
                     },
                     "Irrigation_Data": {
-                        "time": "07/05/23 23:25:43",
-                        "duration": 1.92228532704483,
-                        "Number of irrigation This day": 4
+                        "time": "07/10/23 22:29:27",
+                        "duration": 2.2378560172471476,
+                        "Number of irrigation This day": 3
                     },
                     "Health_Data": {
                         "health_status": "late_blight",
-                        "Last_Update": "05/22/23 16:47:32"
+                        "Last_Update": "07/10/23 19:42:37"
                     },
                     "topics": {
                         "actuator": {
@@ -113,10 +113,10 @@
             }
         },
         "2": {
-            "User_Name": "sarah",
+            "User_Name": "amine",
             "ChatBot": {
                 "ChatID": 966712244,
-                "Password": "03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4"
+                "Password": "54c330d5fa02d666849bbf31f5b97395fe155b38a5ca09c719d279086c214e5e"
             },
             "Plants": {
                 "1": {
@@ -127,13 +127,13 @@
                         "channel_id": "2210034"
                     },
                     "Irrigation_Data": {
-                        "time": "07/06/23 12:55:10",
-                        "duration": 0.21533477549593272,
+                        "time": "07/10/23 22:43:07",
+                        "duration": 2.1231030389917596,
                         "Number of irrigation This day": 4
                     },
                     "Health_Data": {
-                        "health_status": "late_blight",
-                        "Last_Update": "05/22/23 16:47:32"
+                        "health_status": "",
+                        "Last_Update": ""
                     },
                     "Devices": {
                         "1": {

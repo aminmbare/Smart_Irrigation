@@ -15,7 +15,6 @@ class CatalogManager:
         self.Catalog_path= os.path.join(PATH, "catalog.json")
     exposed = True
     def GET(self,*uri,**params):
-        logging.info("Get Request")
         if len(uri)!= 0 and uri[0] == 'Catalog':
             logging.info("Get Catalog  request open ")
             with open(self.Catalog_path) as json_file:
@@ -123,19 +122,26 @@ class CatalogManager:
                 json_file.close()
 
             user_key = param["user"]
-            plant_key =  param["plant"]                
-            last_update =  datetime.strptime(catalog["Users"][user_key]["Plants"][plant_key]["Irrigation_Data"]["time"],'%m/%d/%y %H:%M:%S')
-            new_update = datetime.strptime(Input["time"],'%m/%d/%y %H:%M:%S')
-            if last_update.day ==  new_update.day :              
-                catalog["Users"][user_key]["Plants"][plant_key]["Irrigation_Data"]["Number of irrigation This day"] += 1
+            plant_key =  param["plant"]   
+            try :              
+                last_update =  datetime.strptime(catalog["Users"][user_key]["Plants"][plant_key]["Irrigation_Data"]["time"],'%m/%d/%y %H:%M:%S')
+                new_update = datetime.strptime(Input["time"],'%m/%d/%y %H:%M:%S')
+                if last_update.day ==  new_update.day :              
+                    catalog["Users"][user_key]["Plants"][plant_key]["Irrigation_Data"]["Number of irrigation This day"] += 1
 
-            else : 
+                else : 
+                    catalog["Users"][user_key]["Plants"][plant_key]["Irrigation_Data"]["Number of irrigation This day"] = 1
+                catalog["Users"][user_key]["Plants"][plant_key]["Irrigation_Data"]["duration"] = Input["duration"]  
+                catalog["Users"][user_key]["Plants"][plant_key]["Irrigation_Data"]["time"] = Input["time"]
+                logging.info(catalog['Users'][user_key]["Plants"][plant_key])
+            except ValueError :
                 catalog["Users"][user_key]["Plants"][plant_key]["Irrigation_Data"]["Number of irrigation This day"] = 1
-            catalog["Users"][user_key]["Plants"][plant_key]["Irrigation_Data"]["duration"] = Input["duration"]  
-            catalog["Users"][user_key]["Plants"][plant_key]["Irrigation_Data"]["time"] = Input["time"]
-            logging.info(catalog['Users'][user_key]["Plants"][plant_key])
+                catalog["Users"][user_key]["Plants"][plant_key]["Irrigation_Data"]["duration"] = Input["duration"]  
+                catalog["Users"][user_key]["Plants"][plant_key]["Irrigation_Data"]["time"] = Input["time"]
             with open(self.Catalog_path, "w+") as json_file:
+                
                 json.dump(catalog, json_file, indent=4)
+                
                 json_file.close()
         
         ## Update the health status of a plant  

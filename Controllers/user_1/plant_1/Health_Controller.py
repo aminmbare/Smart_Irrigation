@@ -77,7 +77,7 @@ if __name__ == "__main__":
     controller.start()
     controller.subscribe()
     while True  : 
-        controller.fetch_from_cloud()
+        controller.request_cloud()
         time.sleep(60)
         
     
